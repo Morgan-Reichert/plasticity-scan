@@ -176,7 +176,7 @@ const TIMELINE = [
    COMPONENTS
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Banner — bandeau supérieur cinématique ────────────────── */
+/* ── Banner — bandeau supérieur glassmorphic clair ─────────── */
 function Banner({ title, subtitle, color, vis }) {
   const { opacity, progress } = vis
   const ty = progress < 1
@@ -186,22 +186,22 @@ function Banner({ title, subtitle, color, vis }) {
     <div style={{
       position:'fixed', top:0, left:0, right:0,
       zIndex:9992, pointerEvents:'none',
-      background:'rgba(4,8,20,0.97)',
-      backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
-      borderBottom:`1px solid ${color}45`,
-      padding:'13px 48px 17px',
-      boxShadow:`0 4px 40px rgba(0,0,0,0.6)`,
+      background:'rgba(255,255,255,0.92)',
+      backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)',
+      borderBottom:`1px solid ${color}38`,
+      padding:'14px 48px 18px',
+      boxShadow:`0 6px 32px rgba(15,23,42,0.10), 0 0 1px ${color}30`,
       opacity, transform:`translateY(${ty}px)`,
     }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:3,
         background:`linear-gradient(to right,${color},${color}00)` }} />
       <p style={{ fontSize:9, color, textTransform:'uppercase', letterSpacing:'0.26em',
-        fontWeight:800, fontFamily:'Manrope,sans-serif', marginBottom:5 }}>
+        fontWeight:800, fontFamily:'Manrope,sans-serif', marginBottom:6 }}>
         ✦ Plasticity Scan® — by Sensup
       </p>
       <div style={{ display:'flex', alignItems:'baseline', gap:18, flexWrap:'wrap' }}>
         <h2 style={{ fontFamily:'Syne,sans-serif', fontSize:22, fontWeight:800,
-          color:'#F8FAFC', lineHeight:1.2, margin:0 }}>{title}</h2>
+          color:'#0F172A', lineHeight:1.2, margin:0 }}>{title}</h2>
         {subtitle && <p style={{ fontFamily:'Manrope,sans-serif', fontSize:12,
           color:'#64748B', lineHeight:1.4, margin:0 }}>{subtitle}</p>}
       </div>
@@ -346,18 +346,18 @@ function Callout({ text, color, pos, from = 'right', vis }) {
   return (
     <div style={{
       position:'fixed', ...pos,
-      background:'rgba(6,10,22,0.96)', backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
-      border:`1px solid ${color}55`, borderRadius:14,
+      background:'rgba(255,255,255,0.96)', backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
+      border:`1.5px solid ${color}55`, borderRadius:14,
       padding:'14px 18px', maxWidth:230, zIndex:9994,
       pointerEvents:'none', opacity, transform:`translateX(${tx}px) translateY(${ty}px)`,
-      boxShadow:`0 8px 32px rgba(0,0,0,0.5),0 0 24px ${color}18`,
+      boxShadow:`0 8px 28px rgba(15,23,42,0.12), 0 0 24px ${color}22`,
     }}>
       <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8 }}>
         <div style={{ width:6, height:6, borderRadius:'50%', background:color, boxShadow:`0 0 7px ${color}` }} />
         <span style={{ fontSize:9, fontWeight:800, color, textTransform:'uppercase',
           letterSpacing:'0.15em', fontFamily:'Manrope,sans-serif' }}>Plasticity Scan®</span>
       </div>
-      <p style={{ color:'#F1F5F9', fontSize:13, fontWeight:600, lineHeight:1.6,
+      <p style={{ color:'#0F172A', fontSize:13, fontWeight:600, lineHeight:1.6,
         whiteSpace:'pre-line', fontFamily:'Manrope,sans-serif' }}>{text}</p>
       <div style={{ position:'absolute', inset:0, borderRadius:14,
         boxShadow:`inset 0 0 0 1px ${color}1A`, pointerEvents:'none' }} />
@@ -375,29 +375,32 @@ function FloatingTag({ text, color, pos, vis }) {
   return (
     <div style={{
       position:'fixed', ...pos,
-      background:`linear-gradient(135deg,${color}22,${color}0E)`,
-      border:`1px solid ${color}55`, borderRadius:100,
+      background:'rgba(255,255,255,0.92)',
+      backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)',
+      border:`1.5px solid ${color}66`, borderRadius:100,
       padding:'9px 20px', color, fontSize:12, fontWeight:700,
       fontFamily:'Manrope,sans-serif', letterSpacing:'0.04em',
       zIndex:9993, pointerEvents:'none', opacity,
       transform:`translateY(${ty}px) scale(${scale})`,
-      boxShadow:`0 4px 20px rgba(0,0,0,0.35),0 0 14px ${color}1A`,
+      boxShadow:`0 4px 18px rgba(15,23,42,0.10), 0 0 14px ${color}22`,
       whiteSpace:'nowrap',
     }}>{text}</div>
   )
 }
 
 /* ══════════════════════════════════════════════════════════════
-   OUTRO — Cinematic envoûtant
+   OUTRO — Thème CLAIR cohérent avec le reste de l'app
+   Les logos PNG ont un fond blanc → s'intègrent naturellement
+   sur un fond clair sans rectangle disgracieux.
    ══════════════════════════════════════════════════════════════ */
 function Outro({ vis, elapsed }) {
-  const { opacity, progress } = vis
+  const { progress } = vis
   const e = easeOutCubic(clamp(progress, 0, 1))
-  const t = elapsed - 44.0  // seconds since outro started
+  const t = Math.max(0, elapsed - 44.0)  // seconds since outro started
 
-  // Slow continuous animations
-  const breathe = 1 + Math.sin(t * 0.6) * 0.025
-  const glowPulse = 0.7 + Math.sin(t * 0.9) * 0.3
+  // Subtle continuous animations
+  const breathe = 1 + Math.sin(t * 0.6) * 0.018
+  const glowPulse = 0.75 + Math.sin(t * 0.85) * 0.25
 
   const pills = [
     { label:'plasticité',   color:'#3B82F6' },
@@ -406,161 +409,159 @@ function Outro({ vis, elapsed }) {
     { label:'diversité',    color:'#F59E0B' },
   ]
 
-  // Background floating words — drift slowly
-  const bgWords = [
-    { text:'plasticité',   color:'#3B82F6', x:'4%',  y:'12%', size:72, op:0.04, drift: t * 0.4 },
-    { text:'systémique',   color:'#8B5CF6', x:'3%',  y:'74%', size:64, op:0.04, drift: t * -0.5 },
-    { text:'organisation', color:'#14B8A6', x:'52%', y:'9%',  size:58, op:0.035, drift: t * 0.6 },
-    { text:'diversité',    color:'#F59E0B', x:'58%', y:'78%', size:60, op:0.04, drift: t * -0.4 },
-  ]
-
   return (
     <div style={{
       position:'fixed', inset:0,
       background:`
-        radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.18) 0%, transparent 55%),
-        radial-gradient(ellipse at 15% 85%, rgba(139,92,246,0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 85% 15%, rgba(20,184,166,0.10) 0%, transparent 50%),
-        linear-gradient(180deg, #02050E 0%, #050B1C 50%, #02050E 100%)
+        radial-gradient(ellipse at 50% 38%, rgba(59,130,246,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 15% 85%, rgba(139,92,246,0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 18%, rgba(20,184,166,0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #F0F4FF 0%, #E8EEFF 50%, #F0F4FF 100%)
       `,
       opacity: e,
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
       zIndex:10000, pointerEvents:'none', overflow:'hidden',
     }}>
 
-      {/* Aurora light beams */}
-      <div style={{ position:'absolute', inset:0, opacity: e * glowPulse, pointerEvents:'none',
+      {/* Aurora conique tournante */}
+      <div style={{ position:'absolute', inset:0, opacity: e * glowPulse * 0.6, pointerEvents:'none',
         background:`
-          conic-gradient(from ${t * 8}deg at 50% 50%,
-            rgba(59,130,246,0.05) 0deg,
-            rgba(20,184,166,0.08) 90deg,
-            rgba(139,92,246,0.05) 180deg,
-            rgba(245,158,11,0.04) 270deg,
-            rgba(59,130,246,0.05) 360deg)`,
-        filter:'blur(80px)',
+          conic-gradient(from ${t * 6}deg at 50% 50%,
+            rgba(59,130,246,0.08) 0deg,
+            rgba(20,184,166,0.12) 90deg,
+            rgba(139,92,246,0.07) 180deg,
+            rgba(245,158,11,0.06) 270deg,
+            rgba(59,130,246,0.08) 360deg)`,
+        filter:'blur(100px)',
       }} />
 
-      {/* Dot grid overlay */}
-      <div style={{ position:'absolute', inset:0, opacity: e * 0.4, pointerEvents:'none',
-        backgroundImage:'radial-gradient(circle,rgba(148,163,184,0.07) 1px,transparent 1px)',
-        backgroundSize:'32px 32px',
-        transform:`translateY(${Math.sin(t * 0.3) * 8}px)`,
+      {/* Dot grid overlay (matches mesh-bg) */}
+      <div style={{ position:'absolute', inset:0, opacity: e * 0.6, pointerEvents:'none',
+        backgroundImage:'radial-gradient(circle,rgba(59,130,246,0.10) 1px,transparent 1px)',
+        backgroundSize:'28px 28px',
+        transform:`translateY(${Math.sin(t * 0.3) * 6}px)`,
       }} />
 
-      {/* Background floating words */}
-      {bgWords.map((w, i) => (
+      {/* Mots géants drifting en arrière-plan */}
+      {[
+        { text:'plasticité',   color:'#3B82F6', x:'2%',  y:'12%', size:74, op:0.06, drift: t * 0.3 },
+        { text:'systémique',   color:'#8B5CF6', x:'1%',  y:'72%', size:66, op:0.055, drift: t * -0.4 },
+        { text:'organisation', color:'#14B8A6', x:'50%', y:'8%',  size:58, op:0.05, drift: t * 0.5 },
+        { text:'diversité',    color:'#F59E0B', x:'56%', y:'78%', size:62, op:0.055, drift: t * -0.35 },
+      ].map((w, i) => (
         <div key={w.text} style={{
           position:'absolute', left:w.x, top:w.y,
           fontFamily:'Syne,sans-serif', fontSize:w.size, fontWeight:900,
           color:w.color, opacity: e * w.op, userSelect:'none', pointerEvents:'none',
           letterSpacing:'-0.02em',
-          transform:`translateY(${(1-e)*(20+i*5) + Math.sin(t * 0.3 + i) * 6}px) translateX(${w.drift}px)`,
+          transform:`translateY(${(1-e)*(20+i*5) + Math.sin(t * 0.3 + i) * 5}px) translateX(${w.drift}px)`,
         }}>{w.text}</div>
       ))}
 
-      {/* Particles (subtle floating dots) */}
-      {Array.from({ length: 18 }).map((_, i) => {
+      {/* Particules colorées */}
+      {Array.from({ length: 22 }).map((_, i) => {
         const seed = i * 47.3
         const px = (seed * 13.7) % 100
         const py = (seed * 7.3) % 100
         const drift = Math.sin(t * 0.4 + i) * 30
-        const driftY = Math.cos(t * 0.5 + i * 1.3) * 20
+        const driftY = Math.cos(t * 0.5 + i * 1.3) * 22
         const size = 2 + (i % 4)
-        const colorIdx = i % 4
-        const col = ['#3B82F6','#14B8A6','#8B5CF6','#F59E0B'][colorIdx]
+        const col = ['#3B82F6','#14B8A6','#8B5CF6','#F59E0B'][i % 4]
         return (
           <div key={i} style={{
             position:'absolute',
             left:`${px}%`, top:`${py}%`,
             width:size, height:size, borderRadius:'50%',
-            background:col, opacity: e * 0.6,
-            boxShadow:`0 0 ${size*4}px ${col}`,
+            background:col, opacity: e * 0.55,
+            boxShadow:`0 0 ${size*5}px ${col}`,
             transform:`translate(${drift}px, ${driftY}px)`,
             pointerEvents:'none',
           }} />
         )
       })}
 
-      {/* Main content */}
-      <div style={{ position:'relative', textAlign:'center', padding:'0 48px', maxWidth:880,
-        opacity: e, transform:`translateY(${(1-e)*32}px) scale(${breathe})` }}>
+      {/* Contenu principal */}
+      <div style={{ position:'relative', textAlign:'center', padding:'0 48px', maxWidth:920,
+        opacity: e, transform:`translateY(${(1-e)*28}px) scale(${breathe})` }}>
 
-        {/* Big halo behind logo */}
+        {/* Halo radial derrière le logo */}
         <div style={{
-          position:'absolute', left:'50%', top:80,
+          position:'absolute', left:'50%', top:90,
           transform:'translate(-50%, -50%)',
-          width:520, height:520, borderRadius:'50%',
-          background:'radial-gradient(circle, rgba(59,130,246,0.22) 0%, rgba(20,184,166,0.10) 35%, transparent 70%)',
-          filter:'blur(20px)',
+          width:560, height:560, borderRadius:'50%',
+          background:'radial-gradient(circle, rgba(59,130,246,0.22) 0%, rgba(20,184,166,0.12) 35%, transparent 70%)',
+          filter:'blur(40px)',
           opacity: e * glowPulse,
           pointerEvents:'none',
         }} />
 
-        {/* Logo Plasticity Scan — image */}
-        <div style={{ position:'relative', marginBottom:36 }}>
+        {/* Logo Plasticity Scan — image (white bg blends with light mesh) */}
+        <div style={{ position:'relative', marginBottom:8 }}>
           <img src="/plasticity-scan-logo.png" alt="Plasticity Scan"
             style={{
-              height:120, width:'auto', objectFit:'contain',
-              filter:`drop-shadow(0 0 40px rgba(59,130,246,${0.4 * glowPulse})) drop-shadow(0 0 80px rgba(20,184,166,${0.25 * glowPulse}))`,
-              transform:`scale(${0.92 + Math.sin(t * 0.5) * 0.015})`,
+              height:160, width:'auto', objectFit:'contain',
+              filter:`drop-shadow(0 12px 36px rgba(59,130,246,${0.25 * glowPulse}))`,
+              transform:`scale(${0.96 + Math.sin(t * 0.5) * 0.012})`,
             }} />
         </div>
 
-        {/* Divider line */}
+        {/* Trait séparateur */}
         <div style={{
-          width:120, height:1, margin:'0 auto 24px',
-          background:`linear-gradient(to right, transparent, rgba(59,130,246,${0.6 * e}), transparent)`,
+          width:120, height:1, margin:'12px auto 28px',
+          background:`linear-gradient(to right, transparent, rgba(59,130,246,${0.55 * e}), transparent)`,
         }} />
 
         {/* By Sensup */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:18, marginBottom:36 }}>
-          <span style={{ fontFamily:'Manrope,sans-serif', fontSize:13, color:'#64748B',
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:18, marginBottom:40 }}>
+          <span style={{ fontFamily:'Manrope,sans-serif', fontSize:12, color:'#64748B',
             textTransform:'uppercase', letterSpacing:'0.4em', fontWeight:700 }}>by</span>
           <img src="/sens-up-logo.png" alt="Sensup"
-            style={{ height:64, width:'auto', objectFit:'contain', opacity:0.95,
-              filter:'drop-shadow(0 0 16px rgba(59,130,246,0.25))' }} />
+            style={{ height:58, width:'auto', objectFit:'contain' }} />
         </div>
 
         {/* Tagline */}
         <p style={{
-          fontFamily:'Syne,sans-serif', fontSize:24, color:'#E2E8F0',
-          lineHeight:1.4, maxWidth:560, margin:'0 auto 18px', fontWeight:600,
+          fontFamily:'Syne,sans-serif', fontSize:26, color:'#0F172A',
+          lineHeight:1.4, maxWidth:600, margin:'0 auto 16px', fontWeight:700,
           letterSpacing:'-0.01em',
         }}>
-          Révélez la <span style={{
+          Révélez la{' '}
+          <span style={{
             background:'linear-gradient(90deg,#3B82F6,#14B8A6)',
             WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent',
             backgroundClip:'text', fontWeight:800,
-          }}>plasticité</span> de vos organisations.
+          }}>plasticité</span>{' '}
+          de vos organisations.
         </p>
         <p style={{
-          fontFamily:'Manrope,sans-serif', fontSize:15, color:'#94A3B8',
-          lineHeight:1.6, maxWidth:480, margin:'0 auto 40px', fontWeight:400,
+          fontFamily:'Manrope,sans-serif', fontSize:15, color:'#64748B',
+          lineHeight:1.65, maxWidth:500, margin:'0 auto 44px', fontWeight:500,
         }}>
           Un diagnostic systémique pour les intervenants en transformation organisationnelle.
         </p>
 
-        {/* Concept pills with stagger */}
+        {/* Pills concepts — apparition staggered */}
         <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap', marginBottom:48 }}>
           {pills.map(({ label, color }, i) => {
-            const pillDelay = clamp(t - 0.4 - i * 0.15, 0, 1)
+            const pillDelay = clamp(t - 0.5 - i * 0.15, 0, 1)
             const pillScale = easeOutBack(pillDelay)
             return (
               <div key={label} style={{
                 padding:'10px 24px', borderRadius:100,
-                background:`linear-gradient(135deg, ${color}22, ${color}0A)`,
-                border:`1px solid ${color}60`,
+                background:'rgba(255,255,255,0.85)',
+                border:`1.5px solid ${color}55`,
                 color, fontSize:13, fontWeight:700,
                 fontFamily:'Manrope,sans-serif', letterSpacing:'0.06em',
-                boxShadow:`0 4px 20px ${color}15, inset 0 1px 0 ${color}30`,
+                boxShadow:`0 4px 24px rgba(15,23,42,0.06), 0 0 16px ${color}1A, inset 0 1px 0 ${color}20`,
                 opacity: e * pillDelay,
                 transform:`scale(${pillScale}) translateY(${(1-pillDelay)*10}px)`,
+                backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)',
               }}>{label}</div>
             )
           })}
         </div>
 
-        {/* Final divider */}
+        {/* Divider final */}
         <div style={{
           width:160, height:1, margin:'0 auto 22px',
           background:`linear-gradient(to right, transparent, rgba(20,184,166,${0.5 * e}), transparent)`,
@@ -568,14 +569,14 @@ function Outro({ vis, elapsed }) {
 
         {/* Footer */}
         <p style={{
-          fontFamily:'Manrope,sans-serif', fontSize:11, color:'#475569',
+          fontFamily:'Manrope,sans-serif', fontSize:11, color:'#64748B',
           textTransform:'uppercase', letterSpacing:'0.3em', fontWeight:700, marginBottom:10,
         }}>
           Diagnostic Systémique · 2026
         </p>
         <p style={{
           fontFamily:'Manrope,sans-serif', fontSize:11, color:'#3B82F6',
-          letterSpacing:'0.25em', fontWeight:700, opacity:0.8,
+          letterSpacing:'0.25em', fontWeight:700, opacity:0.85,
         }}>
           ◆ HeR Labs 2026
         </p>
@@ -672,16 +673,16 @@ export default function DemoOverlay() {
     }
   }
 
-  /* Zoom-pulse overlay: subtle vignette + expanding glow on focused element */
+  /* Zoom-pulse overlay: soft light glow on focused element, light vignette around */
   const zoomPulse = zoomOpacity > 0.01 && zoomTarget ? (
     <div key="zoom-pulse" style={{
       position:'fixed', inset:0, zIndex:9990, pointerEvents:'none',
       opacity: zoomOpacity,
       background:`radial-gradient(circle at ${zoomTarget.cx}px ${zoomTarget.cy}px,
-        rgba(59,130,246,0.18) 0px,
-        rgba(59,130,246,0.06) 220px,
-        rgba(2,4,12,0.35) 700px,
-        rgba(2,4,12,0.55) 1400px)`,
+        rgba(59,130,246,0.16) 0px,
+        rgba(59,130,246,0.05) 220px,
+        rgba(15,23,42,0.10) 700px,
+        rgba(15,23,42,0.18) 1400px)`,
       transition:'opacity 0.4s ease',
     }} />
   ) : null
