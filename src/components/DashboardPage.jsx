@@ -7,7 +7,7 @@ import {
 import {
   Activity, Users, TrendingUp, Award, RefreshCw, ArrowLeft,
   AlertCircle, Building2, Search, ChevronUp, ChevronDown,
-  ChevronsUpDown, Download, FileJson, FileText,
+  ChevronsUpDown, Download, FileJson, FileText, LogOut,
 } from 'lucide-react'
 import { supabase, getCompanies } from '../supabaseClient'
 import { dimensions, plasticityLevel } from '../surveyData'
@@ -149,7 +149,9 @@ function exportJSON(scans) {
 /* ════════════════════════════════════════════════════════════════════════
    MAIN DASHBOARD
    ════════════════════════════════════════════════════════════════════════ */
-export default function DashboardPage({ onBack }) {
+export default function DashboardPage({ authUser, onBack }) {
+  const isDirigeant = authUser?.role === 'dirigeant'
+
   const [tab, setTab] = useState('stats')
   const [scans, setScans] = useState(null)
   const [companies, setCompanies] = useState([])
@@ -158,7 +160,7 @@ export default function DashboardPage({ onBack }) {
   const [visible, setVisible] = useState(false)
 
   /* Filters */
-  const [companyFilter, setCompanyFilter] = useState('all')
+  const [companyFilter, setCompanyFilter] = useState(isDirigeant ? (authUser?.companyId ?? 'all') : 'all')
   const [profileFilter, setProfileFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState({ field: 'created_at', dir: 'desc' })
@@ -177,12 +179,24 @@ export default function DashboardPage({ onBack }) {
     let realCompanies = []
 
     if (supabase) {
-      const [scansRes, companiesRes] = await Promise.all([
-        supabase.from('scans').select('*').eq('status', 'completed').order('created_at', { ascending: false }),
-        getCompanies(),
-      ])
-      if (!scansRes.error) realScans = scansRes.data
-      if (!companiesRes.error) realCompanies = companiesRes.data ?? []
+      if (isDirigeant && authUser?.companyId) {
+        // Dirigeant: fetch only their company's scans
+        const scansRes = await supabase
+          .from('scans')
+          .select('*')
+          .eq('status', 'completed')
+          .eq('company_id', authUser.companyId)
+          .order('created_at', { ascending: false })
+        if (!scansRes.error) realScans = scansRes.data
+        realCompanies = [{ id: authUser.companyId, name: authUser.companyName, email_domain: authUser.emailDomain }]
+      } else {
+        const [scansRes, companiesRes] = await Promise.all([
+          supabase.from('scans').select('*').eq('status', 'completed').order('created_at', { ascending: false }),
+          getCompanies(),
+        ])
+        if (!scansRes.error) realScans = scansRes.data
+        if (!companiesRes.error) realCompanies = companiesRes.data ?? []
+      }
     }
 
     if (realScans !== null) {
@@ -190,9 +204,9 @@ export default function DashboardPage({ onBack }) {
       setCompanies(realCompanies)
       setUsingMock(false)
     } else {
-      setScans(MOCK_SCANS)
-      setCompanies(MOCK_COMPANIES)
-      setUsingMock(true)
+      setScans(isDirigeant ? [] : MOCK_SCANS)
+      setCompanies(isDirigeant ? [] : MOCK_COMPANIES)
+      setUsingMock(!isDirigeant)
     }
     setLoading(false)
     setTimeout(() => setVisible(true), 80)
@@ -239,16 +253,19 @@ export default function DashboardPage({ onBack }) {
       {/* ── Header ── */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-navy-700">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-manrope transition-colors">
-            <ArrowLeft size={15} /> Retour
-          </button>
-          <div className="w-px h-5 bg-navy-600" />
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-scan animate-pulse" />
             <span className="font-syne font-700 text-white text-sm tracking-[0.12em] uppercase">
-              Tableau de bord — Intervenants
+              {isDirigeant
+                ? `${authUser?.companyName ?? 'Mon entreprise'} — Résultats`
+                : 'Tableau de bord — Intervenants'}
             </span>
           </div>
+          {isDirigeant && authUser?.emailDomain && (
+            <span className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-electric/10 border border-electric/20 text-electric text-[10px] font-manrope font-600">
+              @{authUser.emailDomain}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {usingMock && (
@@ -257,43 +274,55 @@ export default function DashboardPage({ onBack }) {
               <span className="text-amber-400 text-[10px] font-manrope font-600 uppercase tracking-wider">Données démo</span>
             </div>
           )}
-          <button onClick={fetchAll} disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-white hover:border-electric/40 text-sm font-manrope transition-all disabled:opacity-40">
-            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-            Actualiser
+          {!isDirigeant && (
+            <button onClick={fetchAll} disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-white hover:border-electric/40 text-sm font-manrope transition-all disabled:opacity-40">
+              <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+              Actualiser
+            </button>
+          )}
+          {isDirigeant && (
+            <span className="hidden sm:block text-slate-500 text-xs font-manrope">{authUser?.email}</span>
+          )}
+          <button onClick={onBack}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-red-400 hover:border-red-400/30 text-sm font-manrope transition-all">
+            <LogOut size={13} />
+            <span className="hidden sm:inline">Déconnexion</span>
           </button>
         </div>
       </header>
 
-      {/* ── Tabs ── */}
-      <div className="relative z-10 border-b border-navy-700 px-6 md:px-12">
-        <div className="flex gap-0">
-          {[
-            { id: 'stats', label: 'Statistiques', icon: Activity },
-            { id: 'companies', label: 'Entreprises', icon: Building2 },
-          ].map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setTab(id)}
-              className={`flex items-center gap-2 px-5 py-4 text-sm font-manrope font-600 border-b-2 transition-all ${
-                tab === id
-                  ? 'border-electric text-white'
-                  : 'border-transparent text-slate-500 hover:text-slate-300'
-              }`}>
-              <Icon size={14} />
-              {label}
-              {id === 'stats' && scans !== null && (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-navy-700 text-slate-500'}`}>
-                  {filteredScans.length}
-                </span>
-              )}
-              {id === 'companies' && (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-navy-700 text-slate-500'}`}>
-                  {companies.length}
-                </span>
-              )}
-            </button>
-          ))}
+      {/* ── Tabs (intervenants only see Entreprises tab) ── */}
+      {!isDirigeant && (
+        <div className="relative z-10 border-b border-navy-700 px-6 md:px-12">
+          <div className="flex gap-0">
+            {[
+              { id: 'stats', label: 'Statistiques', icon: Activity },
+              { id: 'companies', label: 'Entreprises', icon: Building2 },
+            ].map(({ id, label, icon: Icon }) => (
+              <button key={id} onClick={() => setTab(id)}
+                className={`flex items-center gap-2 px-5 py-4 text-sm font-manrope font-600 border-b-2 transition-all ${
+                  tab === id
+                    ? 'border-electric text-white'
+                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                }`}>
+                <Icon size={14} />
+                {label}
+                {id === 'stats' && scans !== null && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-navy-700 text-slate-500'}`}>
+                    {filteredScans.length}
+                  </span>
+                )}
+                {id === 'companies' && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-navy-700 text-slate-500'}`}>
+                    {companies.length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center h-[60vh]">
@@ -321,12 +350,19 @@ export default function DashboardPage({ onBack }) {
                       className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl pl-9 pr-4 py-2.5 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none transition-all" />
                   </div>
 
-                  {/* Company filter */}
-                  <select value={companyFilter} onChange={e => { setCompanyFilter(e.target.value); setPage(1) }}
-                    className="bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-2.5 text-sm font-manrope text-white focus:outline-none transition-all cursor-pointer">
-                    <option value="all">Toutes les entreprises</option>
-                    {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
+                  {/* Company filter — hidden for dirigeants (auto-locked to their company) */}
+                  {!isDirigeant ? (
+                    <select value={companyFilter} onChange={e => { setCompanyFilter(e.target.value); setPage(1) }}
+                      className="bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-2.5 text-sm font-manrope text-white focus:outline-none transition-all cursor-pointer">
+                      <option value="all">Toutes les entreprises</option>
+                      {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                  ) : (
+                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-navy-800 border border-electric/20 text-electric text-sm font-manrope">
+                      <Building2 size={13} />
+                      {authUser?.companyName}
+                    </div>
+                  )}
 
                   {/* Profile filter */}
                   <select value={profileFilter} onChange={e => { setProfileFilter(e.target.value); setPage(1) }}
@@ -594,7 +630,7 @@ export default function DashboardPage({ onBack }) {
           )}
 
           {/* ════ TAB: COMPANIES ════ */}
-          {tab === 'companies' && (
+          {tab === 'companies' && !isDirigeant && (
             <CompanyManager
               companies={companies}
               onRefresh={() => getCompanies().then(r => { if (!r.error) setCompanies(r.data ?? []) })}

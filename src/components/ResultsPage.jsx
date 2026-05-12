@@ -7,9 +7,9 @@ import {
   ResponsiveContainer,
   PolarRadiusAxis,
 } from 'recharts'
-import { RotateCcw, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react'
-import { computeScores, identifyLevers, leverDescriptions, plasticityLevel, computeLevelScores, getSystemicNarrative, levelMeta } from '../surveyData'
-import { saveSession } from '../supabaseClient'
+import { RotateCcw, TrendingUp, AlertTriangle, CheckCircle, Info, Users } from 'lucide-react'
+import { computeScores, identifyLevers, leverDescriptions, plasticityLevel, computeLevelScores, getSystemicNarrative, levelMeta, dimensions } from '../surveyData'
+import { saveSession, getCompanyScans } from '../supabaseClient'
 
 function ScoreIcon({ score }) {
   if (score >= 7) return <CheckCircle size={14} className="text-cyan-scan" />
@@ -34,8 +34,26 @@ const CustomAngleAxis = ({ payload, x, y, cx, cy, ...rest }) => {
   )
 }
 
+/* ── Compute company-wide aggregated scores from raw scans ── */
+function computeCompanyStats(scans) {
+  if (!scans || scans.length === 0) return null
+  const n = scans.length
+  const dimAvgs = dimensions.map((dim, i) => {
+    const avg = scans.reduce((s, sc) => {
+      const raw = sc.scores ?? []
+      const v = Array.isArray(raw) ? (raw[i] ?? 0) : 0
+      return s + (typeof v === 'object' ? v.score ?? 0 : v)
+    }, 0) / n
+    return { ...dim, avg: parseFloat(avg.toFixed(1)) }
+  })
+  const globalAvg = dimAvgs.reduce((s, d) => s + d.avg, 0) / dimAvgs.length
+  return { n, dimAvgs, globalAvg: parseFloat(globalAvg.toFixed(1)) }
+}
+
 export default function ResultsPage({ userData, responses, onRestart }) {
   const [visible, setVisible] = useState(false)
+  const [companyScans, setCompanyScans] = useState([])
+  const [loadingCompany, setLoadingCompany] = useState(false)
 
   const scores = computeScores(responses)
   const globalAvg = scores.reduce((s, d) => s + d.score, 0) / scores.length
@@ -52,18 +70,31 @@ export default function ResultsPage({ userData, responses, onRestart }) {
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 100)
-    saveSession({
-      company: userData?.company,
-      company_id: userData?.companyId ?? null,
-      email: userData?.email,
-      profile: userData?.profile,
-      responses,
-      scores: scores.map(({ id, name, score }) => ({ id, name, score })),
-      global_score: parseFloat(globalAvg.toFixed(2)),
-      status: 'completed',
-    })
+    const doSave = async () => {
+      await saveSession({
+        company: userData?.company,
+        company_id: userData?.companyId ?? null,
+        email: userData?.email,
+        profile: userData?.profile,
+        responses,
+        scores: scores.map(({ id, name, score }) => ({ id, name, score })),
+        global_score: parseFloat(globalAvg.toFixed(2)),
+        status: 'completed',
+      })
+      // After saving, fetch all company scans for aggregated view
+      if (userData?.companyId) {
+        setLoadingCompany(true)
+        const { data } = await getCompanyScans(userData.companyId)
+        setCompanyScans(data ?? [])
+        setLoadingCompany(false)
+      }
+    }
+    doSave()
     return () => clearTimeout(t)
   }, [])
+
+  const companyStats = computeCompanyStats(companyScans)
+  const companyRadarData = companyStats?.dimAvgs.map(d => ({ dimension: d.shortName, score: d.avg, fullMark: 9 }))
 
   return (
     <div className="min-h-screen mesh-bg dot-grid">
@@ -99,22 +130,167 @@ export default function ResultsPage({ userData, responses, onRestart }) {
           style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.6s ease' }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-4"
-            style={{ background: level.bg, borderColor: level.color + '40' }}>
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: level.color }} />
-            <span className="text-[11px] font-manrope font-600 uppercase tracking-widest" style={{ color: level.color }}>
-              {level.label}
+            style={{ background: 'rgba(20,184,166,0.1)', borderColor: 'rgba(20,184,166,0.3)' }}>
+            <Users size={11} className="text-cyan-scan" />
+            <span className="text-[11px] font-manrope font-600 uppercase tracking-widest text-cyan-scan">
+              Évaluation collective — {userData?.company}
             </span>
           </div>
           <h1 className="font-syne font-800 text-3xl md:text-4xl text-white mb-2">
-            Résultats — {userData?.company}
+            Résultats Plasticity Scan®
           </h1>
           <p className="text-slate-400 font-manrope text-sm">
-            Profil : <span className="text-white capitalize">{userData?.profile}</span>
+            Votre profil : <span className="text-white capitalize">{userData?.profile}</span>
             {userData?.email && (
               <> · <span className="text-slate-500">{userData.email}</span></>
             )}
           </p>
         </div>
+
+        {/* ── Company-wide results ── */}
+        {userData?.companyId && (
+          <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.7s ease 0.1s' }}>
+
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-px flex-1 bg-navy-700" />
+              <h2 className="font-syne font-700 text-white text-lg whitespace-nowrap flex items-center gap-2">
+                <Users size={16} className="text-cyan-scan" />
+                Vision collective — {userData?.company}
+              </h2>
+              <div className="h-px flex-1 bg-navy-700" />
+            </div>
+
+            {loadingCompany ? (
+              <div className="glass rounded-2xl p-8 flex items-center justify-center gap-3">
+                <div className="w-5 h-5 border-2 border-navy-600 border-t-electric rounded-full animate-spin" />
+                <span className="text-slate-500 font-manrope text-sm">Chargement des données entreprise…</span>
+              </div>
+            ) : companyStats ? (
+              <div className="grid md:grid-cols-[160px_1fr] gap-6 items-center">
+                {/* Company global score */}
+                <div className="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center glow-teal md:self-stretch">
+                  <span className="text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-widest mb-2">
+                    Score entreprise
+                  </span>
+                  <span className="font-syne font-800 text-5xl leading-none mb-1"
+                    style={{ color: plasticityLevel(companyStats.globalAvg).color }}>
+                    {companyStats.globalAvg}
+                  </span>
+                  <span className="text-slate-500 font-manrope text-sm mb-3">/ 9</span>
+                  <div className="w-full bg-navy-700 rounded-full h-1.5 overflow-hidden mb-3">
+                    <div className="h-full rounded-full"
+                      style={{
+                        width: visible ? `${(companyStats.globalAvg / 9) * 100}%` : '0%',
+                        background: 'linear-gradient(to right, #3B82F6, #14B8A6)',
+                        transition: 'width 1.2s ease 0.5s',
+                      }} />
+                  </div>
+                  <span className="text-[10px] font-manrope font-600 uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    style={{ background: plasticityLevel(companyStats.globalAvg).color + '20', color: plasticityLevel(companyStats.globalAvg).color }}>
+                    {plasticityLevel(companyStats.globalAvg).label}
+                  </span>
+                  <p className="text-slate-600 text-[11px] font-manrope mt-3">
+                    {companyStats.n} réponse{companyStats.n > 1 ? 's' : ''}
+                  </p>
+                </div>
+
+                {/* Company radar */}
+                <div className="glass rounded-2xl p-4 glow-teal" style={{ height: 300 }}>
+                  <p className="text-[10px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-1 px-2">
+                    Profil moyen — {userData?.company}
+                  </p>
+                  <ResponsiveContainer width="100%" height="90%">
+                    <RadarChart data={companyRadarData} margin={{ top: 10, right: 24, bottom: 10, left: 24 }}>
+                      <PolarGrid stroke="rgba(20,184,166,0.15)" gridType="polygon" />
+                      <PolarAngleAxis dataKey="dimension" tick={<CustomAngleAxis />} />
+                      <PolarRadiusAxis angle={90} domain={[0, 9]} tickCount={4}
+                        tick={{ fontSize: 9, fill: '#475569' }} axisLine={false} />
+                      <Radar dataKey="score" stroke="#14B8A6" strokeWidth={2}
+                        fill="url(#companyRadarFill)" fillOpacity={0.4} />
+                      <defs>
+                        <radialGradient id="companyRadarFill" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stopColor="#14B8A6" stopOpacity={0.7} />
+                          <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.15} />
+                        </radialGradient>
+                      </defs>
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            ) : (
+              <div className="glass rounded-2xl px-6 py-8 text-center">
+                <Users size={24} className="text-navy-600 mx-auto mb-2" />
+                <p className="text-slate-500 font-manrope text-sm">
+                  Vous êtes le premier à compléter ce diagnostic pour {userData?.company}.<br />
+                  Les données collectives s'afficheront dès qu'il y aura plusieurs réponses.
+                </p>
+              </div>
+            )}
+
+            {/* Dimension comparison bar — only if company data available */}
+            {companyStats && (
+              <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {companyStats.dimAvgs.map((dim) => {
+                  const personal = scores.find(s => s.id === dim.id)
+                  return (
+                    <div key={dim.id} className="glass-light rounded-xl p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <div className="text-[10px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-0.5">
+                            Dim. {dim.id}
+                          </div>
+                          <div className="font-manrope font-600 text-white text-sm leading-tight">
+                            {dim.shortName}
+                          </div>
+                        </div>
+                        <span className="font-syne font-700 text-lg" style={{ color: dim.color }}>
+                          {dim.avg}
+                        </span>
+                      </div>
+                      {/* Company bar */}
+                      <div className="mb-1">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[9px] font-manrope text-slate-600 uppercase tracking-wider">Collectif</span>
+                          <span className="text-[9px] font-manrope text-slate-500">{dim.avg}/9</span>
+                        </div>
+                        <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+                          <div className="h-full rounded-full"
+                            style={{ width: visible ? `${(dim.avg / 9) * 100}%` : '0%', background: dim.color, transition: `width 0.8s ease ${0.4 + dim.id * 0.06}s`, opacity: 0.85 }} />
+                        </div>
+                      </div>
+                      {/* Personal bar */}
+                      {personal && (
+                        <div>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="text-[9px] font-manrope text-slate-600 uppercase tracking-wider">Vous</span>
+                            <span className="text-[9px] font-manrope text-slate-500">{personal.score}/9</span>
+                          </div>
+                          <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full"
+                              style={{ width: visible ? `${(personal.score / 9) * 100}%` : '0%', background: '#64748B', transition: `width 0.8s ease ${0.5 + dim.id * 0.06}s`, opacity: 0.6 }} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Separator before personal results ── */}
+        {userData?.companyId && companyStats && (
+          <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease 0.3s' }}>
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-navy-700" />
+              <p className="text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-widest whitespace-nowrap">
+                Votre contribution personnelle
+              </p>
+              <div className="h-px flex-1 bg-navy-700" />
+            </div>
+          </div>
+        )}
 
         {/* ── Score hero + Radar ── */}
         <div

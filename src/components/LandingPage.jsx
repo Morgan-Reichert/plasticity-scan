@@ -101,7 +101,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
         <button onClick={onIntervenantAccess}
           className="hidden md:flex items-center gap-2 text-slate-500 hover:text-slate-300 text-xs font-manrope tracking-wider uppercase transition-colors group">
           <LayoutDashboard size={13} className="group-hover:text-electric transition-colors" />
-          Espace intervenants
+          Connexion
         </button>
       </header>
 
