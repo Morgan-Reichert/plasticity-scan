@@ -23,12 +23,15 @@ export default function ComputingScreen({ onComplete }) {
     const stepTimers = STEPS.map((_, i) =>
       setTimeout(() => setStepIdx(i), i * 480)
     )
-    const doneTimer = setTimeout(() => onComplete(), 2800)
+    // In demo seek mode, don't auto-complete (let the developer inspect the screen)
+    const doneTimer = typeof window.__DEMO_SEEK__ === 'number'
+      ? null
+      : setTimeout(() => onComplete(), 2800)
 
     return () => {
       clearInterval(progressTimer)
       stepTimers.forEach(clearTimeout)
-      clearTimeout(doneTimer)
+      if (doneTimer) clearTimeout(doneTimer)
     }
   }, []) // eslint-disable-line
 

@@ -118,6 +118,11 @@ const TIMELINE = [
   { id:'s-arrow', type:'arrow-to', start:9.5, end:11.6,
     anchor:'survey-questions', from:'left', color:'#3B82F6', offset:60 },
 
+  // Callout dans la marge gauche, explique le curseur
+  { id:'s-callout', type:'callout', start:9.6, end:11.6,
+    text:'Curseur intuitif\n0 → 9 points\nLecture systémique',
+    color:'#3B82F6', pos:{ top:'62%', left:'3%' }, from:'left' },
+
   // Tag dans la marge haut-droite
   { id:'s-tag', type:'tag', start:10.0, end:11.7,
     text:'🔬 Lecture systémique',
@@ -247,7 +252,7 @@ function Banner({ title, subtitle, color, vis }) {
 }
 
 /* ── BoxRing — anneau qui suit un élément DOM ───────────────── */
-function BoxRing({ rect, color, vis, elapsed, circle }) {
+function BoxRing({ rect, color, vis, elapsed, circle, ...rest }) {
   if (!rect) return null
   const { opacity, progress } = vis
   const pulse = 1 + Math.sin(elapsed * 3.2) * 0.022
@@ -265,7 +270,7 @@ function BoxRing({ rect, color, vis, elapsed, circle }) {
     : `${Math.min(rect.width, rect.height) * 0.18}px`
 
   return (
-    <div style={{
+    <div data-overlay-id={rest['data-overlay-id']} style={{
       position:'fixed',
       left: rect.left, top: rect.top,
       width: rect.width, height: rect.height,
@@ -351,12 +356,13 @@ function PostIt({ text, color, pos, rotate = '0deg', vis }) {
     ? Math.max(0.01, easeOutBack(entryT)) * 0.9 + 0.1
     : 1 - easeInCubic(exitAmt) * 0.14
   const lift = exitAmt > 0.01 ? exitAmt * -16 : 0
+  const { transform: posTransform = '', ...posRest } = pos || {}
   return (
     <div style={{
-      position:'fixed', ...pos,
+      position:'fixed', ...posRest,
       background:color+'F0', color:DARK_TEXT.has(color)?'#0D1117':'#FFFFFF',
       padding:'18px 18px 14px', borderRadius:3,
-      transform:`rotate(${rotate}) scale(${scale}) translateY(${lift}px)`,
+      transform:`${posTransform} rotate(${rotate}) scale(${scale}) translateY(${lift}px)`,
       transformOrigin:'top center',
       boxShadow:'0 6px 28px rgba(0,0,0,0.52),0 2px 6px rgba(0,0,0,0.28)',
       fontSize:13, fontWeight:700, fontFamily:'Manrope,sans-serif',
@@ -376,7 +382,7 @@ function PostIt({ text, color, pos, rotate = '0deg', vis }) {
 }
 
 /* ── Callout ─────────────────────────────────────────────────── */
-function Callout({ text, color, pos, from = 'right', vis }) {
+function Callout({ text, color, pos, from = 'right', vis, ...rest }) {
   const { opacity, progress } = vis
   const entryT  = clamp(progress, 0, 1)
   const exitAmt = clamp(1 - progress, 0, 1)
@@ -390,14 +396,15 @@ function Callout({ text, color, pos, from = 'right', vis }) {
   const ty = progress<1?dyE:dyX
   const scale = progress<1 ? 0.92 + easeOutCubic(entryT) * 0.08 : 1 - easeInCubic(exitAmt) * 0.06
   const blur  = progress<1 ? (1 - entryT) * 6 : easeInCubic(exitAmt) * 3
+  const { transform: posTransform = '', ...posRest } = pos || {}
   return (
-    <div style={{
-      position:'fixed', ...pos,
+    <div data-overlay-id={rest['data-overlay-id']} style={{
+      position:'fixed', ...posRest,
       background:'rgba(255,255,255,0.96)', backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
       border:`1.5px solid ${color}55`, borderRadius:14,
       padding:'14px 18px', maxWidth:230, zIndex:9994,
       pointerEvents:'none', opacity,
-      transform:`translateX(${tx}px) translateY(${ty}px) scale(${scale})`,
+      transform:`${posTransform} translateX(${tx}px) translateY(${ty}px) scale(${scale})`,
       filter:`blur(${blur}px)`,
       boxShadow:`0 8px 28px rgba(15,23,42,0.12), 0 0 24px ${color}22`,
     }}>
@@ -421,16 +428,17 @@ function FloatingTag({ text, color, pos, vis }) {
   const exitAmt = clamp(1 - progress, 0, 1)
   const ty = progress<1?(1-easeOutBack(entryT))*18:easeInCubic(exitAmt)*10
   const scale = progress<1?0.7+easeOutBack(entryT)*0.3:1-easeInCubic(exitAmt)*0.08
+  const { transform: posTransform = '', ...posRest } = pos || {}
   return (
     <div style={{
-      position:'fixed', ...pos,
+      position:'fixed', ...posRest,
       background:'rgba(255,255,255,0.92)',
       backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)',
       border:`1.5px solid ${color}66`, borderRadius:100,
       padding:'9px 20px', color, fontSize:12, fontWeight:700,
       fontFamily:'Manrope,sans-serif', letterSpacing:'0.04em',
       zIndex:9993, pointerEvents:'none', opacity,
-      transform:`translateY(${ty}px) scale(${scale})`,
+      transform:`${posTransform} translateY(${ty}px) scale(${scale})`,
       boxShadow:`0 4px 18px rgba(15,23,42,0.10), 0 0 14px ${color}22`,
       whiteSpace:'nowrap',
     }}>{text}</div>
@@ -692,6 +700,15 @@ export default function DemoOverlay() {
   const lastAnchorRef = useRef(null)
 
   useEffect(() => {
+    // Debug: if window.__DEMO_SEEK__ is set, freeze at that time
+    if (typeof window.__DEMO_SEEK__ === 'number') {
+      setElapsed(window.__DEMO_SEEK__)
+      // Still tick at 1fps for continuous animations (breathe, particles)
+      const id = setInterval(() => {
+        setElapsed(window.__DEMO_SEEK__ + Math.random() * 0.001)  // micro-jitter to refresh
+      }, 100)
+      return () => clearInterval(id)
+    }
     startRef.current = performance.now()
     let rafId
     const tick = () => {
@@ -728,11 +745,17 @@ export default function DemoOverlay() {
     const id = setTimeout(() => {
       const el = document.querySelector(`[data-demo="${dominantAnchor}"]`)
       if (!el) return
-      el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
-
-      // Trigger a brief zoom-pulse focus on this element
+      // Compute target scrollY so the element is centered vertically in the viewport
       const r = el.getBoundingClientRect()
-      setZoomTarget({ cx: r.left + r.width / 2, cy: r.top + r.height / 2, ts: performance.now() })
+      const absoluteCenterY = window.scrollY + r.top + r.height / 2
+      const targetY = Math.max(0, absoluteCenterY - window.innerHeight / 2)
+      window.scrollTo({ top: targetY, behavior: 'smooth' })
+
+      // Trigger a brief zoom-pulse focus on this element (after scroll settles)
+      setTimeout(() => {
+        const r2 = el.getBoundingClientRect()
+        setZoomTarget({ cx: r2.left + r2.width / 2, cy: r2.top + r2.height / 2, ts: performance.now() })
+      }, 350)
     }, 120)
     return () => clearTimeout(id)
   }, [dominantAnchor])
@@ -745,26 +768,27 @@ export default function DemoOverlay() {
     const vis = getVis(elapsed, item.start, item.end)
     if (!vis) return null
     const base = { vis, elapsed }
+    const debugProps = { 'data-overlay-id': item.id }
 
     switch (item.type) {
       case 'banner':
-        return <Banner key={item.id} {...item} {...base} />
+        return <Banner key={item.id} {...item} {...base} {...debugProps} />
       case 'box': {
         const rect = getAnchorRect(item.anchor, item.pad ?? 12)
-        return <BoxRing key={item.id} rect={rect} color={item.color} circle={item.circle} {...base} />
+        return <BoxRing key={item.id} rect={rect} color={item.color} circle={item.circle} {...base} {...debugProps} />
       }
       case 'arrow-to': {
         const rect = getAnchorRect(item.anchor, 0)
-        return <ArrowTo key={item.id} rect={rect} from={item.from} color={item.color} offset={item.offset} {...base} />
+        return <ArrowTo key={item.id} rect={rect} from={item.from} color={item.color} offset={item.offset} {...base} {...debugProps} />
       }
       case 'postit':
-        return <PostIt key={item.id} {...item} {...base} />
+        return <PostIt key={item.id} {...item} {...base} {...debugProps} />
       case 'callout':
-        return <Callout key={item.id} {...item} {...base} />
+        return <Callout key={item.id} {...item} {...base} {...debugProps} />
       case 'tag':
-        return <FloatingTag key={item.id} {...item} {...base} />
+        return <FloatingTag key={item.id} {...item} {...base} {...debugProps} />
       case 'outro':
-        return <Outro key={item.id} vis={vis} elapsed={elapsed} />
+        return <Outro key={item.id} vis={vis} elapsed={elapsed} {...debugProps} />
       default:
         return null
     }

@@ -69,16 +69,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
     fullMark: 9,
   }))
 
-  /* ── Demo auto-scroll ── */
-  useEffect(() => {
-    if (!isDemo) return
-    // Smooth scroll down after score reveal
-    const t1 = setTimeout(() => window.scrollTo({ top: 500,  behavior: 'smooth' }), 4000)
-    const t2 = setTimeout(() => window.scrollTo({ top: 1100, behavior: 'smooth' }), 7500)
-    const t3 = setTimeout(() => window.scrollTo({ top: 1800, behavior: 'smooth' }), 11000)
-    const t4 = setTimeout(() => window.scrollTo({ top: 2400, behavior: 'smooth' }), 14000)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
-  }, [isDemo])
+  /* Auto-scrolling is now driven by DemoOverlay (anchored to data-demo elements). */
 
   /* ── Score count-up animation ── */
   useEffect(() => {

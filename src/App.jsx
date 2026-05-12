@@ -45,6 +45,14 @@ export default function App() {
     if (!window.location.search.includes('demo')) return
     setIsDemo(true)
 
+    // Debug: ?seek=X jumps directly to screen for time X (and freezes overlay there)
+    const params = new URLSearchParams(window.location.search)
+    const seekParam = parseFloat(params.get('seek') ?? '')
+    const hasSeek = !Number.isNaN(seekParam)
+    if (hasSeek) {
+      window.__DEMO_SEEK__ = seekParam
+    }
+
     // Start at the very top of the page
     window.scrollTo(0, 0)
 
@@ -58,10 +66,23 @@ export default function App() {
     styleEl.textContent = '*, *::before, *::after { cursor: none !important; }'
     document.head.appendChild(styleEl)
 
+    // If seek mode, jump directly to the right screen and don't schedule timers
+    if (hasSeek) {
+      // Disable browser scroll restoration so reload doesn't preserve scroll
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+      window.scrollTo(0, 0)
+      if      (seekParam >= 44.0) { setAuthUser({ role:'intervenant', email:'demo@sensup.com' }); setScreen('dashboard') /* outro overlays on top */ }
+      else if (seekParam >= 34.0) { setAuthUser({ role:'intervenant', email:'demo@sensup.com' }); setScreen('dashboard') }
+      else if (seekParam >= 14.8) { setScreen('results') }
+      else if (seekParam >= 12.0) { setScreen('computing') }
+      else if (seekParam >= 6.0)  { setScreen('survey') }
+      else                         { setScreen('landing') }
+      return () => { document.getElementById('demo-cursor-hide')?.remove() }
+    }
+
     const t1 = setTimeout(() => { window.scrollTo(0, 0); setScreen('survey') },    6000)
     const t2 = setTimeout(() => { window.scrollTo(0, 0); setScreen('computing') }, 12000)
     // computing → results is handled naturally by ComputingScreen.onComplete at ~t+2.8s
-    // DemoOverlay auto-scrolls to center each anchored annotation, no manual scrolling needed.
 
     const t3 = setTimeout(() => {
       window.scrollTo(0, 0)
