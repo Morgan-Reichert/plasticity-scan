@@ -116,7 +116,7 @@ function computeStats(scans) {
 /* ════════════════════════════════════════════════════════════════════════
    MAIN DASHBOARD
    ════════════════════════════════════════════════════════════════════════ */
-export default function DashboardPage({ authUser, onBack }) {
+export default function DashboardPage({ authUser, onBack, isDemo }) {
   const isDirigeant = authUser?.role === 'dirigeant'
 
   const [tab, setTab] = useState('stats')
@@ -143,6 +143,17 @@ export default function DashboardPage({ authUser, onBack }) {
   const fetchAll = async () => {
     setLoading(true)
     setVisible(false)
+
+    // In demo mode: use mock data instantly, no network call
+    if (isDemo) {
+      setScans(MOCK_SCANS)
+      setCompanies(MOCK_COMPANIES)
+      setUsingMock(true)
+      setLoading(false)
+      setTimeout(() => setVisible(true), 80)
+      return
+    }
+
     let realScans = null
     let realCompanies = []
 

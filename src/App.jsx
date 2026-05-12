@@ -5,6 +5,7 @@ import ResultsPage from './components/ResultsPage'
 import ConnectionPage from './components/ConnectionPage'
 import DashboardPage from './components/DashboardPage'
 import ComputingScreen from './components/ComputingScreen'
+import DemoOverlay from './components/DemoOverlay'
 
 /* ── Demo mode preset data ── */
 const DEMO_USER = {
@@ -33,23 +34,30 @@ export default function App() {
   const [isDemo, setIsDemo]       = useState(false)
 
   /* ── Demo mode: triggered by ?demo in URL ──
-     Sequence: landing (5s) → computing (3s) → results (auto-scroll)
-     No survey in demo — keeps it bulletproof for pitch recording ── */
+     Full video sequence showing ALL screens with DemoOverlay annotations:
+       0s  → landing
+       6s  → survey  (survey animations play automatically)
+       12s → computing  (ComputingScreen.onComplete fires at ~14.8s → results)
+       34s → dashboard  (mock data, intervenant role)
+       44s → DemoOverlay takes over with outro full-screen slide
+     ── */
   useEffect(() => {
     if (!window.location.search.includes('demo')) return
     setIsDemo(true)
 
-    // Pre-load data immediately so ResultsPage is ready
+    // Pre-load all data immediately so every screen is ready
     setUserData(DEMO_USER)
     setResponses(DEMO_RESPONSES)
 
-    // t=5s: go to computing screen
-    const t1 = setTimeout(() => setScreen('computing'), 5000)
+    const t1 = setTimeout(() => setScreen('survey'),    6000)
+    const t2 = setTimeout(() => setScreen('computing'), 12000)
+    // computing → results is handled naturally by ComputingScreen.onComplete at ~t+2.8s
+    const t3 = setTimeout(() => {
+      setAuthUser({ role: 'intervenant', email: 'demo@sensup.com' })
+      setScreen('dashboard')
+    }, 34000)
 
-    // ComputingScreen's own onComplete (~2.8s later) will call
-    // handleComputingDone → setScreen('results') automatically
-
-    return () => clearTimeout(t1)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   /* ── Normal handlers ── */
@@ -123,8 +131,11 @@ export default function App() {
         />
       )}
       {screen === 'dashboard' && (
-        <DashboardPage authUser={authUser} onBack={handleSignOut} />
+        <DashboardPage authUser={authUser} onBack={handleSignOut} isDemo={isDemo} />
       )}
+
+      {/* Demo video overlay — renders as portal over all screens */}
+      {isDemo && <DemoOverlay />}
     </div>
   )
 }
