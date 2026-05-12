@@ -140,7 +140,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
               systémique rapide qui évalue la capacité réelle d'une organisation à{' '}
               <span className="text-slate-300">absorber les transformations</span>,{' '}
               <span className="text-slate-300">coopérer dans la complexité</span> et{' '}
-              <span className="text-slate-300">maintenir sa capacité d'exécution</span> sous pression.
+              <span className="text-slate-300">maintenir sa capacité d'exécution</span> dans l'incertitude.
             </p>
 
             {/* Feature pills */}

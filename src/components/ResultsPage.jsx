@@ -7,8 +7,8 @@ import {
   ResponsiveContainer,
   PolarRadiusAxis,
 } from 'recharts'
-import { RotateCcw, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react'
-import { computeScores, identifyLevers, leverDescriptions, plasticityLevel } from '../surveyData'
+import { RotateCcw, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react'
+import { computeScores, identifyLevers, leverDescriptions, plasticityLevel, computeLevelScores, getSystemicNarrative, levelMeta } from '../surveyData'
 import { saveSession } from '../supabaseClient'
 
 function ScoreIcon({ score }) {
@@ -41,6 +41,8 @@ export default function ResultsPage({ userData, responses, onRestart }) {
   const globalAvg = scores.reduce((s, d) => s + d.score, 0) / scores.length
   const level = plasticityLevel(globalAvg)
   const levers = identifyLevers(scores)
+  const levelScores = computeLevelScores(responses)
+  const narrative = getSystemicNarrative(levelScores)
 
   const radarData = scores.map((d) => ({
     dimension: d.shortName,
@@ -220,6 +222,106 @@ export default function ResultsPage({ userData, responses, onRestart }) {
                 </div>
               )
             })}
+          </div>
+        </div>
+
+        {/* ── Lecture systémique 3 niveaux ── */}
+        <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.3s' }}>
+
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-px flex-1 bg-navy-700" />
+            <h2 className="font-syne font-700 text-white text-lg whitespace-nowrap flex items-center gap-2">
+              Lecture systémique
+              <span className="text-[10px] font-manrope font-400 text-slate-500 normal-case tracking-normal">— 3 niveaux</span>
+            </h2>
+            <div className="h-px flex-1 bg-navy-700" />
+          </div>
+
+          {/* 3 level score cards */}
+          <div className="grid grid-cols-3 gap-4 mb-5">
+            {Object.values(levelMeta).map((meta) => {
+              const score = levelScores[meta.key]
+              const lv = plasticityLevel(score)
+              return (
+                <div key={meta.key} className="glass rounded-2xl p-5 relative overflow-hidden"
+                  style={{ borderColor: `${meta.color}25` }}>
+                  <div className="absolute top-0 left-0 right-0 h-0.5"
+                    style={{ background: `linear-gradient(to right, ${meta.color}, transparent)` }} />
+                  <div className="text-2xl mb-2">{meta.symbol}</div>
+                  <p className="text-[10px] font-manrope font-600 uppercase tracking-widest mb-1"
+                    style={{ color: meta.color }}>
+                    {meta.label}
+                  </p>
+                  <div className="flex items-end gap-1 mb-2">
+                    <span className="font-syne font-800 text-3xl leading-none" style={{ color: lv.color }}>
+                      {score.toFixed(1)}
+                    </span>
+                    <span className="text-slate-600 text-xs font-manrope mb-0.5">/9</span>
+                  </div>
+                  <div className="h-1 bg-navy-700 rounded-full overflow-hidden mb-3">
+                    <div className="h-full rounded-full transition-all duration-1000"
+                      style={{
+                        width: visible ? `${(score / 9) * 100}%` : '0%',
+                        background: meta.color,
+                        transition: 'width 1s ease 0.5s',
+                        opacity: 0.85,
+                      }} />
+                  </div>
+                  <p className="text-[11px] font-manrope text-slate-500 leading-snug hidden sm:block">
+                    {meta.description}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Narrative tension block */}
+          <div className="glass rounded-2xl p-6 relative overflow-hidden"
+            style={{
+              borderColor: narrative.urgency === 'critical' ? 'rgba(239,68,68,0.3)'
+                : narrative.urgency === 'high'   ? 'rgba(245,158,11,0.3)'
+                : narrative.urgency === 'low'    ? 'rgba(20,184,166,0.3)'
+                : 'rgba(59,130,246,0.2)',
+            }}>
+            <div className="absolute top-0 left-0 right-0 h-0.5"
+              style={{
+                background: narrative.urgency === 'critical' ? 'linear-gradient(to right,#EF4444,transparent)'
+                  : narrative.urgency === 'high'   ? 'linear-gradient(to right,#F59E0B,transparent)'
+                  : narrative.urgency === 'low'    ? 'linear-gradient(to right,#14B8A6,transparent)'
+                  : 'linear-gradient(to right,#3B82F6,transparent)',
+              }} />
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{
+                    background: narrative.urgency === 'critical' ? 'rgba(239,68,68,0.12)'
+                      : narrative.urgency === 'high'   ? 'rgba(245,158,11,0.12)'
+                      : narrative.urgency === 'low'    ? 'rgba(20,184,166,0.12)'
+                      : 'rgba(59,130,246,0.12)',
+                  }}>
+                  <Info size={15} style={{
+                    color: narrative.urgency === 'critical' ? '#EF4444'
+                      : narrative.urgency === 'high'   ? '#F59E0B'
+                      : narrative.urgency === 'low'    ? '#14B8A6'
+                      : '#3B82F6',
+                  }} />
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="font-syne font-700 text-white text-base mb-2">{narrative.tension}</p>
+                <p className="font-manrope text-sm text-slate-400 leading-relaxed">{narrative.text}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* POC disclaimer */}
+          <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-navy-800 border border-navy-700">
+            <span className="w-1 h-1 rounded-full bg-slate-600 flex-shrink-0" />
+            <p className="text-[11px] font-manrope text-slate-600 leading-relaxed">
+              <span className="text-slate-500 font-600">Lecture indicative · Version POC</span>
+              {' '}— Basée sur {Object.values(levelMeta).reduce((a, m) => a + m.questionCount, 0)} questions (distribution variable par niveau).
+              La version complète mobilisera 3 questions par niveau par dimension pour une fiabilité optimale.
+            </p>
           </div>
         </div>
 
