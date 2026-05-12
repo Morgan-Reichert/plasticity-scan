@@ -40,8 +40,8 @@ const CustomBarTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div className="glass rounded-xl px-3 py-2 text-xs font-manrope">
-      <p className="text-slate-300 mb-1">{label}</p>
-      <p className="text-white font-600">{payload[0].value.toFixed(1)} / 9</p>
+      <p className="text-slate-600 mb-1">{label}</p>
+      <p className="text-slate-900 font-600">{payload[0].value.toFixed(1)} / 9</p>
     </div>
   )
 }
@@ -65,7 +65,7 @@ function KpiCard({ icon: Icon, label, value, sub, color }) {
       </div>
       <div className="min-w-0">
         <p className="text-slate-500 text-[11px] font-manrope uppercase tracking-widest mb-0.5">{label}</p>
-        <p className="text-white font-syne font-700 text-2xl leading-none mb-1">{value}</p>
+        <p className="text-slate-900 font-syne font-700 text-2xl leading-none mb-1">{value}</p>
         {sub && <p className="text-slate-500 text-xs font-manrope">{sub}</p>}
       </div>
     </div>
@@ -73,7 +73,7 @@ function KpiCard({ icon: Icon, label, value, sub, color }) {
 }
 
 function SortIcon({ field, sort }) {
-  if (sort.field !== field) return <ChevronsUpDown size={12} className="text-slate-600" />
+  if (sort.field !== field) return <ChevronsUpDown size={12} className="text-slate-400" />
   return sort.dir === 'asc'
     ? <ChevronUp size={12} className="text-electric" />
     : <ChevronDown size={12} className="text-electric" />
@@ -230,11 +230,11 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
         style={{ background: 'radial-gradient(ellipse at 20% 10%, rgba(139,92,246,0.07) 0%, transparent 55%), radial-gradient(ellipse at 80% 85%, rgba(20,184,166,0.06) 0%, transparent 55%)' }} />
 
       {/* ── Header ── */}
-      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-navy-700">
+      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-slate-200 bg-white/80">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-scan animate-pulse" />
-            <span className="font-syne font-700 text-white text-sm tracking-[0.12em] uppercase">
+            <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.12em] uppercase">
               {isDirigeant
                 ? `${authUser?.companyName ?? 'Mon entreprise'} — Résultats`
                 : 'Tableau de bord — Intervenants'}
@@ -255,16 +255,16 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
           )}
           {!isDirigeant && (
             <button onClick={fetchAll} disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-white hover:border-electric/40 text-sm font-manrope transition-all disabled:opacity-40">
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-electric/40 text-sm font-manrope transition-all disabled:opacity-40">
               <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
               Actualiser
             </button>
           )}
           {isDirigeant && (
-            <span className="hidden sm:block text-slate-500 text-xs font-manrope">{authUser?.email}</span>
+            <span className="hidden sm:block text-slate-400 text-xs font-manrope">{authUser?.email}</span>
           )}
           <button onClick={onBack}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-red-400 hover:border-red-400/30 text-sm font-manrope transition-all">
+            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 text-slate-500 hover:text-red-400 hover:border-red-400/30 text-sm font-manrope transition-all">
             <LogOut size={13} />
             <span className="hidden sm:inline">Déconnexion</span>
           </button>
@@ -273,7 +273,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
 
       {/* ── Tabs (intervenants only see Entreprises tab) ── */}
       {!isDirigeant && (
-        <div className="relative z-10 border-b border-navy-700 px-6 md:px-12">
+        <div className="relative z-10 border-b border-slate-200 px-6 md:px-12 bg-white/60">
           <div className="flex gap-0">
             {[
               { id: 'stats', label: 'Statistiques', icon: Activity },
@@ -282,18 +282,18 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
               <button key={id} onClick={() => setTab(id)}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-manrope font-600 border-b-2 transition-all ${
                   tab === id
-                    ? 'border-electric text-white'
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
+                    ? 'border-electric text-slate-900'
+                    : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}>
                 <Icon size={14} />
                 {label}
                 {id === 'stats' && scans !== null && (
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-navy-700 text-slate-500'}`}>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-slate-100 text-slate-500'}`}>
                     {filteredScans.length}
                   </span>
                 )}
                 {id === 'companies' && (
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-navy-700 text-slate-500'}`}>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-600 ${tab === id ? 'bg-electric/20 text-electric' : 'bg-slate-100 text-slate-500'}`}>
                     {companies.length}
                   </span>
                 )}
@@ -306,7 +306,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
       {loading ? (
         <div className="flex items-center justify-center h-[60vh]">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-2 border-navy-600 border-t-electric rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-slate-200 border-t-electric rounded-full animate-spin" />
             <span className="text-slate-500 font-manrope text-sm">Chargement des données…</span>
           </div>
         </div>
@@ -323,21 +323,21 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                 <div className="flex flex-wrap gap-3 items-center">
                   {/* Search */}
                   <div className="relative flex-1 min-w-[200px]">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input type="text" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }}
                       placeholder="Rechercher par entreprise ou email…"
-                      className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl pl-9 pr-4 py-2.5 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none transition-all" />
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl pl-9 pr-4 py-2.5 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none transition-all" />
                   </div>
 
                   {/* Company filter — hidden for dirigeants (auto-locked to their company) */}
                   {!isDirigeant ? (
                     <select value={companyFilter} onChange={e => { setCompanyFilter(e.target.value); setPage(1) }}
-                      className="bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-2.5 text-sm font-manrope text-white focus:outline-none transition-all cursor-pointer">
+                      className="bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-2.5 text-sm font-manrope text-slate-900 focus:outline-none transition-all cursor-pointer">
                       <option value="all">Toutes les entreprises</option>
                       {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   ) : (
-                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-navy-800 border border-electric/20 text-electric text-sm font-manrope">
+                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 border border-electric/20 text-electric text-sm font-manrope">
                       <Building2 size={13} />
                       {authUser?.companyName}
                     </div>
@@ -345,7 +345,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
 
                   {/* Profile filter */}
                   <select value={profileFilter} onChange={e => { setProfileFilter(e.target.value); setPage(1) }}
-                    className="bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-2.5 text-sm font-manrope text-white focus:outline-none transition-all cursor-pointer">
+                    className="bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-2.5 text-sm font-manrope text-slate-900 focus:outline-none transition-all cursor-pointer">
                     <option value="all">Tous les profils</option>
                     <option value="collaborateur">Collaborateur</option>
                     <option value="manager">Manager</option>
@@ -367,8 +367,8 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
 
                 {/* Active filters summary */}
                 {(companyFilter !== 'all' || profileFilter !== 'all' || search) && (
-                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-navy-700">
-                    <span className="text-slate-500 text-xs font-manrope">Filtres actifs :</span>
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200">
+                    <span className="text-slate-400 text-xs font-manrope">Filtres actifs :</span>
                     {companyFilter !== 'all' && (
                       <span className="px-2 py-0.5 rounded-full bg-electric/15 text-electric text-xs font-manrope font-600 cursor-pointer" onClick={() => setCompanyFilter('all')}>
                         {companies.find(c => c.id === companyFilter)?.name ?? companyFilter} ×
@@ -385,7 +385,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                       </span>
                     )}
                     <button onClick={() => { setCompanyFilter('all'); setProfileFilter('all'); setSearch('') }}
-                      className="text-slate-500 hover:text-red-400 text-xs font-manrope ml-1 transition-colors">
+                      className="text-slate-400 hover:text-red-400 text-xs font-manrope ml-1 transition-colors">
                       Tout effacer
                     </button>
                   </div>
@@ -396,8 +396,8 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
               {filteredScans.length === 0 ? (
                 <div className="flex items-center justify-center py-20">
                   <div className="text-center">
-                    <Activity size={28} className="text-navy-600 mx-auto mb-3" />
-                    <p className="text-slate-400 font-manrope text-sm">
+                    <Activity size={28} className="text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-500 font-manrope text-sm">
                       {scans?.length === 0 ? 'Aucun scan soumis pour le moment.' : 'Aucun résultat pour ces filtres.'}
                     </p>
                     {!usingMock && scans?.length === 0 && (
@@ -433,14 +433,14 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                     <div className="grid lg:grid-cols-2 gap-6">
                       {/* Radar */}
                       <div className="glass rounded-2xl p-6 glow-teal">
-                        <h2 className="font-syne font-700 text-white text-base mb-1">Profil moyen</h2>
+                        <h2 className="font-syne font-700 text-slate-900 text-base mb-1">Profil moyen</h2>
                         <p className="text-slate-500 text-xs font-manrope mb-4">Scores moyens par dimension</p>
                         <div style={{ height: 280 }}>
                           <ResponsiveContainer width="100%" height="100%">
                             <RadarChart data={radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
                               <PolarGrid stroke="rgba(59,130,246,0.15)" gridType="polygon" />
-                              <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: '#94A3B8', fontFamily: 'Manrope' }} />
-                              <PolarRadiusAxis angle={90} domain={[0, 9]} tickCount={4} tick={{ fontSize: 8, fill: '#475569' }} axisLine={false} />
+                              <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10, fill: '#64748B', fontFamily: 'Manrope' }} />
+                              <PolarRadiusAxis angle={90} domain={[0, 9]} tickCount={4} tick={{ fontSize: 8, fill: '#94A3B8' }} axisLine={false} />
                               <Radar dataKey="score" stroke="#3B82F6" strokeWidth={2} fill="url(#dashRadar)" fillOpacity={0.45} />
                               <defs>
                                 <radialGradient id="dashRadar" cx="50%" cy="50%" r="50%">
@@ -459,8 +459,8 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                         <div className="glass rounded-2xl p-5 glow-blue" style={{ height: 200 }}>
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={barData} layout="vertical" margin={{ top: 0, right: 12, bottom: 0, left: 4 }}>
-                              <XAxis type="number" domain={[0, 9]} tick={{ fontSize: 9, fill: '#475569' }} axisLine={false} tickLine={false} />
-                              <YAxis type="category" dataKey="name" tick={{ fontSize: 9, fill: '#94A3B8', fontFamily: 'Manrope' }} axisLine={false} tickLine={false} width={68} />
+                              <XAxis type="number" domain={[0, 9]} tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                              <YAxis type="category" dataKey="name" tick={{ fontSize: 9, fill: '#64748B', fontFamily: 'Manrope' }} axisLine={false} tickLine={false} width={68} />
                               <Tooltip content={<CustomBarTooltip />} cursor={{ fill: 'rgba(59,130,246,0.06)' }} />
                               <Bar dataKey="score" radius={[0, 5, 5, 0]} maxBarSize={14}>
                                 {barData.map((e, i) => <Cell key={i} fill={e.fill} fillOpacity={0.85} />)}
@@ -485,9 +485,9 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                               <div key={p.name} className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-                                  <span className="text-slate-300 text-xs font-manrope">{p.name}</span>
+                                  <span className="text-slate-600 text-xs font-manrope">{p.name}</span>
                                 </div>
-                                <span className="text-white font-syne font-700 text-sm">{p.value} <span className="text-slate-500 font-manrope text-[10px]">({p.pct}%)</span></span>
+                                <span className="text-slate-900 font-syne font-700 text-sm">{p.value} <span className="text-slate-400 font-manrope text-[10px]">({p.pct}%)</span></span>
                               </div>
                             ))}
                           </div>
@@ -498,10 +498,10 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
 
                   {/* ── Sortable table ── */}
                   <div className="glass rounded-2xl overflow-hidden">
-                    <div className="px-6 py-4 border-b border-navy-700 flex items-center justify-between">
+                    <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                       <div>
-                        <h2 className="font-syne font-700 text-white text-base">Réponses détaillées</h2>
-                        <p className="text-slate-500 text-xs font-manrope">
+                        <h2 className="font-syne font-700 text-slate-900 text-base">Réponses détaillées</h2>
+                        <p className="text-slate-400 text-xs font-manrope">
                           {filteredScans.length} résultat{filteredScans.length !== 1 ? 's' : ''}
                           {filteredScans.length > PAGE_SIZE && ` · page ${page}/${totalPages}`}
                         </p>
@@ -517,7 +517,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm font-manrope">
                         <thead>
-                          <tr className="border-b border-navy-700">
+                          <tr className="border-b border-slate-200 bg-slate-50">
                             {[
                               { key: 'company',      label: 'Entreprise' },
                               { key: 'email',        label: 'Email' },
@@ -528,7 +528,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                             ].map(({ key, label }) => (
                               <th key={label}
                                 onClick={() => key && toggleSort(key)}
-                                className={`text-left text-[10px] font-600 uppercase tracking-widest text-slate-500 px-5 py-3 ${key ? 'cursor-pointer hover:text-slate-300 select-none' : ''}`}>
+                                className={`text-left text-[10px] font-600 uppercase tracking-widest text-slate-500 px-5 py-3 ${key ? 'cursor-pointer hover:text-slate-700 select-none' : ''}`}>
                                 <div className="flex items-center gap-1.5">
                                   {label}
                                   {key && <SortIcon field={key} sort={sort} />}
@@ -541,7 +541,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                           {pagedScans.map((sc, i) => {
                             const gs = sc.global_score ?? 0
                             return (
-                              <tr key={sc.id ?? i} className="border-b border-navy-700/40 hover:bg-navy-800/40 transition-colors">
+                              <tr key={sc.id ?? i} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                                 <td className="px-5 py-3">
                                   <div className="flex items-center gap-2">
                                     <div className="w-7 h-7 rounded-lg bg-electric/10 flex items-center justify-center flex-shrink-0">
@@ -549,10 +549,10 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                                         {(sc.company ?? '?').slice(0, 2).toUpperCase()}
                                       </span>
                                     </div>
-                                    <span className="text-white font-500 truncate max-w-[120px]">{sc.company ?? '—'}</span>
+                                    <span className="text-slate-900 font-500 truncate max-w-[120px]">{sc.company ?? '—'}</span>
                                   </div>
                                 </td>
-                                <td className="px-5 py-3 text-slate-400 text-xs truncate max-w-[160px]">{sc.email ?? '—'}</td>
+                                <td className="px-5 py-3 text-slate-500 text-xs truncate max-w-[160px]">{sc.email ?? '—'}</td>
                                 <td className="px-5 py-3">
                                   <span className="text-xs px-2 py-0.5 rounded-full font-600"
                                     style={{ background: (PROFILE_COLORS[sc.profile] ?? '#64748B') + '18', color: PROFILE_COLORS[sc.profile] ?? '#94A3B8' }}>
@@ -563,10 +563,10 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                                   <span className="font-syne font-700" style={{ color: plasticityLevel(gs).color }}>
                                     {gs.toFixed(1)}
                                   </span>
-                                  <span className="text-slate-600 text-xs"> /9</span>
+                                  <span className="text-slate-400 text-xs"> /9</span>
                                 </td>
                                 <td className="px-5 py-3"><ScorePill score={gs} /></td>
-                                <td className="px-5 py-3 text-slate-500 text-xs whitespace-nowrap">
+                                <td className="px-5 py-3 text-slate-400 text-xs whitespace-nowrap">
                                   {sc.created_at ? new Date(sc.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                                 </td>
                               </tr>
@@ -578,17 +578,17 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                      <div className="px-6 py-4 border-t border-navy-700 flex items-center justify-between">
-                        <span className="text-slate-500 text-xs font-manrope">
+                      <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+                        <span className="text-slate-400 text-xs font-manrope">
                           {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredScans.length)} sur {filteredScans.length}
                         </span>
                         <div className="flex gap-2">
                           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                            className="px-3 py-1.5 rounded-lg border border-navy-600 text-slate-400 hover:text-white text-xs font-manrope transition-all disabled:opacity-30">
+                            className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 text-xs font-manrope transition-all disabled:opacity-30">
                             ← Préc.
                           </button>
                           <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                            className="px-3 py-1.5 rounded-lg border border-navy-600 text-slate-400 hover:text-white text-xs font-manrope transition-all disabled:opacity-30">
+                            className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-900 text-xs font-manrope transition-all disabled:opacity-30">
                             Suiv. →
                           </button>
                         </div>

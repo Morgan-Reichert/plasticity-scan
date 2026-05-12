@@ -8,11 +8,11 @@ export default {
     extend: {
       colors: {
         navy: {
-          DEFAULT: '#0A0F1E',
-          900: '#070B16',
-          800: '#0F172A',
-          700: '#1E293B',
-          600: '#2D3F5C',
+          DEFAULT: '#F0F4FF',
+          900: '#E8EEFF',
+          800: '#F8FAFC',
+          700: '#E2E8F0',
+          600: '#CBD5E1',
         },
         electric: {
           DEFAULT: '#3B82F6',

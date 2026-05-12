@@ -68,12 +68,12 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
     <div className="min-h-screen mesh-bg dot-grid relative overflow-hidden flex flex-col">
 
       {/* ── Hackathon banner ── */}
-      <div className="relative z-20 w-full bg-gradient-to-r from-electric/15 via-navy-800 to-cyan-scan/15 border-b border-electric/20 py-2 px-4 text-center">
-        <span className="font-manrope text-xs text-slate-300">
+      <div className="relative z-20 w-full bg-gradient-to-r from-electric/10 via-white to-cyan-scan/10 border-b border-slate-200 py-2 px-4 text-center">
+        <span className="font-manrope text-xs text-slate-600">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-electric animate-pulse mr-2 align-middle" />
           Démonstration réalisée dans le cadre du{' '}
-          <span className="text-white font-600">Hackathon HeR Labs 2026</span>
-          <span className="mx-2 text-slate-600">·</span>
+          <span className="text-slate-900 font-600">Hackathon HeR Labs 2026</span>
+          <span className="mx-2 text-slate-400">·</span>
           Projet proposé et protégé par{' '}
           <span className="text-cyan-scan font-600">Sensup</span>
         </span>
@@ -86,7 +86,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
         style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.07) 0%, transparent 70%)' }} />
 
       {/* ── Header ── */}
-      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
+      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6 bg-white/80 border-b border-slate-200">
         <div className="flex items-center gap-4">
           {/* Plasticity Scan logo */}
           <div className="flex items-center gap-3">
@@ -96,20 +96,20 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                 <Activity size={12} className="text-white" />
               </div>
             </div>
-            <span className="font-syne font-700 text-white text-sm tracking-[0.18em] uppercase">
+            <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.18em] uppercase">
               Plasticity Scan<sup className="text-electric text-[10px] ml-0.5">®</sup>
             </span>
           </div>
 
           {/* Separator + Sensup logo */}
           <div className="flex items-center gap-2.5 pl-4 relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-5 bg-navy-600" />
-            <span className="text-slate-600 text-[10px] font-manrope font-600 uppercase tracking-widest">by</span>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-5 bg-slate-200" />
+            <span className="text-slate-400 text-[10px] font-manrope font-600 uppercase tracking-widest">by</span>
             <img src="/sensup-logo.png" alt="Sensup" className="h-[60px] w-auto object-contain" />
           </div>
         </div>
         <button onClick={onIntervenantAccess}
-          className="hidden md:flex items-center gap-2 text-slate-500 hover:text-slate-300 text-xs font-manrope tracking-wider uppercase transition-colors group">
+          className="hidden md:flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-manrope tracking-wider uppercase transition-colors group">
           <LayoutDashboard size={13} className="group-hover:text-electric transition-colors" />
           Connexion
         </button>
@@ -131,7 +131,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
             </div>
 
             {/* H1 */}
-            <h1 className="anim-1 font-syne font-800 text-4xl md:text-[3.25rem] leading-[1.08] text-white mb-5">
+            <h1 className="anim-1 font-syne font-800 text-4xl md:text-[3.25rem] leading-[1.08] text-slate-900 mb-5">
               Mesurez la{' '}
               <span className="shimmer-text">plasticité</span>
               <br />
@@ -145,12 +145,12 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
             </p>
 
             {/* Description */}
-            <p className="anim-2 font-manrope text-base text-slate-400 leading-relaxed mb-8 max-w-[480px]">
-              Le <strong className="text-white font-600">Plasticity Scan®</strong> est un outil de diagnostic
+            <p className="anim-2 font-manrope text-base text-slate-600 leading-relaxed mb-8 max-w-[480px]">
+              Le <strong className="text-slate-900 font-600">Plasticity Scan®</strong> est un outil de diagnostic
               systémique rapide qui évalue la capacité réelle d'une organisation à{' '}
-              <span className="text-slate-300">absorber les transformations</span>,{' '}
-              <span className="text-slate-300">coopérer dans la complexité</span> et{' '}
-              <span className="text-slate-300">maintenir sa capacité d'exécution</span> dans l'incertitude.
+              <span className="text-slate-700">absorber les transformations</span>,{' '}
+              <span className="text-slate-700">coopérer dans la complexité</span> et{' '}
+              <span className="text-slate-700">maintenir sa capacité d'exécution</span> dans l'incertitude.
             </p>
 
             {/* Feature pills */}
@@ -160,9 +160,9 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                 { label: '3 niveaux de perception', Icon: Activity },
                 { label: 'Leviers d\'action concrets', Icon: Zap },
               ].map(({ label, Icon }) => (
-                <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-navy-700 border border-navy-600">
+                <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm">
                   <Icon size={13} className="text-cyan-scan" />
-                  <span className="text-slate-300 text-sm font-manrope font-500">{label}</span>
+                  <span className="text-slate-700 text-sm font-manrope font-500">{label}</span>
                 </div>
               ))}
             </div>
@@ -182,13 +182,13 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                     style={{ background: color + '0D', border: `1px solid ${color}20` }}>
                     <span className="text-2xl" style={{ color }}>{symbol}</span>
                     <div>
-                      <p className="font-syne font-700 text-white text-sm">{level}</p>
+                      <p className="font-syne font-700 text-slate-900 text-sm">{level}</p>
                       <p className="font-manrope text-[10px] text-slate-500 leading-tight">{sub}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="text-xs font-manrope text-slate-600 mt-3 text-center leading-relaxed">
+              <p className="text-xs font-manrope text-slate-500 mt-3 text-center leading-relaxed">
                 Cartographie des écarts de perception, zones de rigidité et fragilités systémiques
               </p>
             </div>
@@ -204,7 +204,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                 { label: 'Fragilités systémiques cachées',            color: '#8B5CF6' },
                 { label: 'Leviers d\'action prioritaires',            color: '#14B8A6' },
               ].map(({ label, color }) => (
-                <div key={label} className="flex items-center gap-3 font-manrope text-sm text-slate-400">
+                <div key={label} className="flex items-center gap-3 font-manrope text-sm text-slate-600">
                   <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color }} />
                   {label}
                 </div>
@@ -217,28 +217,28 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
           <div className="anim-5 lg:sticky lg:top-8">
             <div className="glass rounded-2xl p-8 glow-blue">
               <div className="mb-7">
-                <h2 className="font-syne font-700 text-white text-xl mb-1">Démarrer le diagnostic</h2>
-                <p className="text-slate-400 text-sm font-manrope">5 minutes · Résultats immédiats · Confidentiel</p>
+                <h2 className="font-syne font-700 text-slate-900 text-xl mb-1">Démarrer le diagnostic</h2>
+                <p className="text-slate-500 text-sm font-manrope">5 minutes · Résultats immédiats · Confidentiel</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
 
                 {/* Company selector */}
                 <div>
-                  <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
+                  <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
                     Votre entreprise
                   </label>
                   {loadingCompanies ? (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-navy-800 border border-navy-600">
-                      <Loader2 size={14} className="text-slate-500 animate-spin" />
-                      <span className="text-slate-500 text-sm font-manrope">Chargement…</span>
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
+                      <Loader2 size={14} className="text-slate-400 animate-spin" />
+                      <span className="text-slate-400 text-sm font-manrope">Chargement…</span>
                     </div>
                   ) : companies.length === 0 ? (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-navy-800 border border-amber-400/30">
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-50 border border-amber-400/30">
                       <AlertCircle size={14} className="text-amber-400" />
                       <span className="text-amber-400 text-xs font-manrope">
                         Aucune entreprise configurée.<br />
-                        <span className="text-slate-500">Contactez un intervenant HeR Labs.</span>
+                        <span className="text-slate-400">Contactez un intervenant HeR Labs.</span>
                       </span>
                     </div>
                   ) : (
@@ -250,14 +250,14 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                           setForm({ ...form, companyId: e.target.value, companyName: co?.name ?? '', email: '' })
                           setError('')
                         }}
-                        className="w-full appearance-none bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-3 pr-10 text-white font-manrope text-sm focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all cursor-pointer"
+                        className="w-full appearance-none bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-3 pr-10 text-slate-900 font-manrope text-sm focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all cursor-pointer"
                       >
                         <option value="">Sélectionner votre entreprise…</option>
                         {companies.map(c => (
                           <option key={c.id} value={c.id}>{c.name}</option>
                         ))}
                       </select>
-                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                     </div>
                   )}
 
@@ -272,18 +272,18 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
 
                 {/* Email */}
                 <div>
-                  <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
+                  <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
                     Email professionnel
                   </label>
                   <input type="email" value={form.email}
                     onChange={e => { setForm({ ...form, email: e.target.value }); setError('') }}
                     placeholder={selectedCompany ? `vous@${selectedCompany.email_domain}` : 'vous@entreprise.com'}
-                    className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-3 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
+                    className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-3 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
                 </div>
 
                 {/* Profile */}
                 <div>
-                  <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-3">
+                  <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-3">
                     Votre profil
                   </label>
                   <div className="space-y-2">
@@ -292,11 +292,11 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                         onClick={() => setForm({ ...form, profile: p.id })}
                         className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border transition-all text-left ${
                           form.profile === p.id
-                            ? 'border-electric bg-electric/10 text-white'
-                            : 'border-navy-600 bg-navy-900 text-slate-400 hover:border-electric/40 hover:bg-navy-800'
+                            ? 'border-electric bg-electric/10 text-slate-900'
+                            : 'border-slate-200 bg-white text-slate-600 hover:border-electric/40 hover:bg-slate-50'
                         }`}>
                         <span className="text-xl leading-none flex-shrink-0"
-                          style={{ color: form.profile === p.id ? '#3B82F6' : '#64748B' }}>
+                          style={{ color: form.profile === p.id ? '#3B82F6' : '#94A3B8' }}>
                           {p.symbol}
                         </span>
                         <div className="min-w-0">
@@ -325,7 +325,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                 </button>
               </form>
 
-              <p className="text-center text-slate-600 text-xs font-manrope mt-5">
+              <p className="text-center text-slate-400 text-xs font-manrope mt-5">
                 Vos données restent strictement confidentielles
               </p>
             </div>
@@ -334,14 +334,14 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 mt-auto border-t border-navy-700 py-5 px-6 md:px-12">
+      <footer className="relative z-10 mt-auto border-t border-slate-200 py-5 px-6 md:px-12 bg-white/60">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="font-manrope text-xs text-slate-600">
+          <p className="font-manrope text-xs text-slate-500">
             Plasticity Scan<sup className="text-[9px]">®</sup> — Diagnostic Systémique · {new Date().getFullYear()}
           </p>
-          <p className="font-manrope text-xs text-slate-600 text-center">
-            <span className="text-slate-500">Hackathon HeR Labs 2026</span>
-            <span className="mx-2 text-slate-700">·</span>
+          <p className="font-manrope text-xs text-slate-500 text-center">
+            <span className="text-slate-400">Hackathon HeR Labs 2026</span>
+            <span className="mx-2 text-slate-300">·</span>
             Projet proposé et protégé par <span className="text-cyan-scan font-600">Sensup</span>
           </p>
         </div>

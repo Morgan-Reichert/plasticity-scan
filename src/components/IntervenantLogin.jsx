@@ -28,10 +28,10 @@ export default function IntervenantLogin({ onSuccess, onBack }) {
         style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(139,92,246,0.09) 0%, transparent 60%)' }} />
 
       {/* Header */}
-      <header className="relative z-10 px-6 md:px-12 py-5">
+      <header className="relative z-10 px-6 md:px-12 py-5 border-b border-slate-200 bg-white/80">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-manrope transition-colors"
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-manrope transition-colors"
         >
           <ArrowLeft size={15} />
           Retour à l'accueil
@@ -59,15 +59,15 @@ export default function IntervenantLogin({ onSuccess, onBack }) {
 
           <div className="glass rounded-2xl p-8 glow-blue" style={shake ? { animation: 'shake 0.4s ease' } : {}}>
             <div className="text-center mb-7">
-              <h1 className="font-syne font-800 text-white text-xl mb-1">Espace Intervenants</h1>
-              <p className="text-slate-400 font-manrope text-sm">
+              <h1 className="font-syne font-800 text-slate-900 text-xl mb-1">Espace Intervenants</h1>
+              <p className="text-slate-500 font-manrope text-sm">
                 Accès réservé aux organisateurs et intervenants HeR Labs 2026
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
+                <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
                   Code d'accès
                 </label>
                 <div className="relative">
@@ -76,13 +76,13 @@ export default function IntervenantLogin({ onSuccess, onBack }) {
                     value={pwd}
                     onChange={(e) => { setPwd(e.target.value); setError('') }}
                     placeholder="••••••••••"
-                    className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-3 pr-11 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-3 pr-11 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={() => setShow(!show)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {show ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
@@ -105,13 +105,13 @@ export default function IntervenantLogin({ onSuccess, onBack }) {
               </button>
             </form>
 
-            <p className="text-center text-slate-600 text-xs font-manrope mt-5">
+            <p className="text-center text-slate-400 text-xs font-manrope mt-5">
               Code par défaut :{' '}
-              <code className="text-slate-500 bg-navy-700 px-1.5 py-0.5 rounded text-[11px]">sensup2026</code>
+              <code className="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">sensup2026</code>
             </p>
           </div>
 
-          <p className="text-center text-slate-700 text-xs font-manrope mt-5">
+          <p className="text-center text-slate-400 text-xs font-manrope mt-5">
             Hackathon HeR Labs 2026 · Sensup
           </p>
         </div>

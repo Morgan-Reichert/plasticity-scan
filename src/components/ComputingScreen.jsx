@@ -42,7 +42,7 @@ export default function ComputingScreen({ onComplete }) {
 
       {/* Ambient glow */}
       <div aria-hidden className="pointer-events-none fixed inset-0"
-        style={{ background: 'radial-gradient(ellipse at 50% 45%, rgba(59,130,246,0.13) 0%, transparent 60%)' }} />
+        style={{ background: 'radial-gradient(ellipse at 50% 45%, rgba(59,130,246,0.08) 0%, transparent 60%)' }} />
 
       {/* Orbiting rings */}
       <div aria-hidden className="orbit-cw absolute rounded-full"
@@ -62,7 +62,7 @@ export default function ComputingScreen({ onComplete }) {
       </div>
 
       {/* Brand */}
-      <p className="relative z-10 font-syne font-800 text-white text-xl tracking-[0.18em] uppercase mb-1">
+      <p className="relative z-10 font-syne font-800 text-slate-900 text-xl tracking-[0.18em] uppercase mb-1">
         Plasticity Scan<sup className="text-electric text-[11px]">®</sup>
       </p>
       <p className="relative z-10 text-slate-500 text-xs font-manrope tracking-widest uppercase mb-10">
@@ -72,7 +72,7 @@ export default function ComputingScreen({ onComplete }) {
       {/* Progress */}
       <div className="relative z-10 w-72">
         <div className="flex justify-between mb-2">
-          <span className="text-slate-400 text-sm font-manrope truncate pr-4">
+          <span className="text-slate-600 text-sm font-manrope truncate pr-4">
             {STEPS[stepIdx]}
           </span>
           <span className="text-electric font-syne font-700 text-sm flex-shrink-0">
@@ -80,13 +80,13 @@ export default function ComputingScreen({ onComplete }) {
           </span>
         </div>
 
-        <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+        <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full"
             style={{
               width: `${progress}%`,
               background: 'linear-gradient(to right, #3B82F6, #14B8A6)',
-              boxShadow: '0 0 8px rgba(59,130,246,0.6)',
+              boxShadow: '0 0 8px rgba(59,130,246,0.4)',
               transition: 'width 0.05s linear',
             }}
           />
@@ -96,7 +96,7 @@ export default function ComputingScreen({ onComplete }) {
           {STEPS.map((_, i) => (
             <div key={i}
               className="w-1.5 h-1.5 rounded-full transition-all duration-300"
-              style={{ background: i <= stepIdx ? '#3B82F6' : '#1E293B' }}
+              style={{ background: i <= stepIdx ? '#3B82F6' : '#E2E8F0' }}
             />
           ))}
         </div>

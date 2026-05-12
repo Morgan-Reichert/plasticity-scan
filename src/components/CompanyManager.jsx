@@ -6,14 +6,14 @@ import { createCompany, deleteCompany, createDirigeant, deleteDirigeant, getDiri
 function DirigeantRow({ d, onDelete }) {
   const [deleting, setDeleting] = useState(false)
   return (
-    <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-navy-900 border border-navy-700 group">
+    <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-white border border-slate-200 group">
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-7 h-7 rounded-lg bg-electric/10 flex items-center justify-center flex-shrink-0">
           <span className="text-electric font-syne font-700 text-[10px]">
             {d.email.slice(0, 2).toUpperCase()}
           </span>
         </div>
-        <span className="text-slate-300 text-sm font-manrope truncate">{d.email}</span>
+        <span className="text-slate-700 text-sm font-manrope truncate">{d.email}</span>
       </div>
       <button onClick={async () => { setDeleting(true); await onDelete(d.id); setDeleting(false) }}
         disabled={deleting}
@@ -70,7 +70,7 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
   }
 
   return (
-    <div className="glass rounded-2xl overflow-hidden border border-navy-700">
+    <div className="glass rounded-2xl overflow-hidden border border-slate-200">
       {/* Company header */}
       <div className="flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-3 min-w-0">
@@ -78,7 +78,7 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
             <span className="font-syne font-700 text-electric text-xs">{company.name.slice(0, 2).toUpperCase()}</span>
           </div>
           <div className="min-w-0">
-            <p className="text-white font-manrope font-600 text-sm truncate">{company.name}</p>
+            <p className="text-slate-900 font-manrope font-600 text-sm truncate">{company.name}</p>
             <div className="flex items-center gap-1 mt-0.5">
               <AtSign size={10} className="text-cyan-scan flex-shrink-0" />
               <span className="text-cyan-scan text-[11px] font-manrope">{company.email_domain}</span>
@@ -88,13 +88,13 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
         <div className="flex items-center gap-2 flex-shrink-0">
           <button onClick={toggleExpand}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-manrope font-600 border transition-all ${
-              expanded ? 'border-electric/40 bg-electric/10 text-electric' : 'border-navy-600 text-slate-400 hover:border-electric/40 hover:text-white'
+              expanded ? 'border-electric/40 bg-electric/10 text-electric' : 'border-slate-200 text-slate-500 hover:border-electric/40 hover:text-slate-900'
             }`}>
             <Users size={11} />
             Dirigeants
           </button>
           <button onClick={() => onDeleteCompany(company)}
-            className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all">
+            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all">
             <Trash2 size={13} />
           </button>
         </div>
@@ -102,7 +102,7 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
 
       {/* Dirigeants panel */}
       {expanded && (
-        <div className="border-t border-navy-700 px-5 py-4 bg-navy-900/50">
+        <div className="border-t border-slate-200 px-5 py-4 bg-slate-50/80">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[11px] font-manrope font-600 uppercase tracking-widest text-slate-500">
               Comptes dirigeants
@@ -115,7 +115,7 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
 
           {/* Add form */}
           {addForm.show && (
-            <form onSubmit={handleAddDirigeant} className="mb-4 p-4 rounded-xl bg-navy-800 border border-navy-700 space-y-3">
+            <form onSubmit={handleAddDirigeant} className="mb-4 p-4 rounded-xl bg-white border border-slate-200 space-y-3">
               <div className="grid sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[10px] font-manrope font-600 uppercase tracking-wider text-slate-500 mb-1.5">
@@ -124,7 +124,7 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
                   <input type="email" value={addForm.email}
                     onChange={e => { setAddForm(f => ({ ...f, email: e.target.value })); setAddError('') }}
                     placeholder={`dirigeant@${company.email_domain}`}
-                    className="w-full bg-navy-900 border border-navy-600 focus:border-electric rounded-lg px-3 py-2 text-white text-sm font-manrope placeholder:text-slate-700 focus:outline-none transition-all" />
+                    className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-lg px-3 py-2 text-slate-900 text-sm font-manrope placeholder:text-slate-400 focus:outline-none transition-all" />
                 </div>
                 <div>
                   <label className="block text-[10px] font-manrope font-600 uppercase tracking-wider text-slate-500 mb-1.5">
@@ -134,9 +134,9 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
                     <input type={showPwd ? 'text' : 'password'} value={addForm.password}
                       onChange={e => { setAddForm(f => ({ ...f, password: e.target.value })); setAddError('') }}
                       placeholder="6 caractères min."
-                      className="w-full bg-navy-900 border border-navy-600 focus:border-electric rounded-lg px-3 py-2 pr-9 text-white text-sm font-manrope placeholder:text-slate-700 focus:outline-none transition-all" />
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-lg px-3 py-2 pr-9 text-slate-900 text-sm font-manrope placeholder:text-slate-400 focus:outline-none transition-all" />
                     <button type="button" onClick={() => setShowPwd(!showPwd)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400">
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                       {showPwd ? <EyeOff size={12} /> : <Eye size={12} />}
                     </button>
                   </div>
@@ -146,7 +146,7 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
               {addSuccess && <p className="text-cyan-scan text-xs font-manrope flex items-center gap-1"><Check size={11} />{addSuccess}</p>}
               <div className="flex gap-2 justify-end">
                 <button type="button" onClick={() => setAddForm(f => ({ ...f, show: false }))}
-                  className="px-3 py-1.5 rounded-lg border border-navy-600 text-slate-400 text-xs font-manrope hover:text-white transition-all">
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500 text-xs font-manrope hover:text-slate-900 transition-all">
                   Annuler
                 </button>
                 <button type="submit" disabled={adding}
@@ -160,12 +160,12 @@ function CompanyCard({ company, onDeleteCompany, onRefresh }) {
           {/* Dirigeant list */}
           {loadingDir ? (
             <div className="flex justify-center py-4">
-              <Loader2 size={16} className="animate-spin text-slate-500" />
+              <Loader2 size={16} className="animate-spin text-slate-400" />
             </div>
           ) : dirigeants.length === 0 ? (
             <div className="text-center py-5">
-              <KeyRound size={20} className="text-navy-600 mx-auto mb-2" />
-              <p className="text-slate-600 text-xs font-manrope">Aucun compte dirigeant pour cette entreprise.</p>
+              <KeyRound size={20} className="text-slate-300 mx-auto mb-2" />
+              <p className="text-slate-400 text-xs font-manrope">Aucun compte dirigeant pour cette entreprise.</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -218,7 +218,7 @@ export default function CompanyManager({ companies, onRefresh }) {
 
       {/* Add company form */}
       <div className="glass rounded-2xl p-6">
-        <h3 className="font-syne font-700 text-white text-base mb-5 flex items-center gap-2">
+        <h3 className="font-syne font-700 text-slate-900 text-base mb-5 flex items-center gap-2">
           <Plus size={16} className="text-electric" /> Ajouter une entreprise
         </h3>
         <form onSubmit={handleAdd} className="grid sm:grid-cols-[1fr_1fr_auto] gap-3 items-end">
@@ -227,10 +227,10 @@ export default function CompanyManager({ companies, onRefresh }) {
               Nom
             </label>
             <div className="relative">
-              <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Building2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
                 placeholder="Ex : Sensup"
-                className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl pl-9 pr-4 py-3 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
+                className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl pl-9 pr-4 py-3 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
             </div>
           </div>
           <div>
@@ -238,10 +238,10 @@ export default function CompanyManager({ companies, onRefresh }) {
               Domaine email
             </label>
             <div className="relative">
-              <AtSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <AtSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input type="text" value={form.email_domain} onChange={e => setForm({ ...form, email_domain: e.target.value })}
                 placeholder="sensup.com"
-                className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl pl-9 pr-4 py-3 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
+                className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl pl-9 pr-4 py-3 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
             </div>
           </div>
           <button type="submit" disabled={loading}
@@ -256,7 +256,7 @@ export default function CompanyManager({ companies, onRefresh }) {
       {/* Companies list */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-syne font-700 text-white text-base flex items-center gap-2">
+          <h3 className="font-syne font-700 text-slate-900 text-base flex items-center gap-2">
             <Building2 size={15} className="text-cyan-scan" />
             Entreprises & comptes dirigeants
           </h3>
@@ -267,7 +267,7 @@ export default function CompanyManager({ companies, onRefresh }) {
 
         {companies.length === 0 ? (
           <div className="glass rounded-2xl px-6 py-12 text-center">
-            <Building2 size={28} className="text-navy-600 mx-auto mb-3" />
+            <Building2 size={28} className="text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500 font-manrope text-sm">Aucune entreprise. Ajoutez-en une ci-dessus.</p>
           </div>
         ) : (

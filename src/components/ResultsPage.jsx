@@ -27,7 +27,7 @@ const CustomAngleAxis = ({ payload, x, y, cx, cy, ...rest }) => {
       dominantBaseline="central"
       className="font-manrope"
       fontSize={10}
-      fill="#94A3B8"
+      fill="#64748B"
     >
       {payload.value}
     </text>
@@ -136,13 +136,13 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
       />
 
       {/* ── Header ── */}
-      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-navy-700">
-        <span className="font-syne font-700 text-white text-sm tracking-[0.15em] uppercase">
+      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-slate-200 bg-white/80">
+        <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.15em] uppercase">
           Plasticity Scan<sup className="text-electric text-[10px]">®</sup>
         </span>
         <button
           onClick={onRestart}
-          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-manrope transition-colors"
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-manrope transition-colors"
         >
           <RotateCcw size={14} />
           Nouveau diagnostic
@@ -163,13 +163,13 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
               Évaluation collective — {userData?.company}
             </span>
           </div>
-          <h1 className="font-syne font-800 text-3xl md:text-4xl text-white mb-2">
+          <h1 className="font-syne font-800 text-3xl md:text-4xl text-slate-900 mb-2">
             Résultats Plasticity Scan®
           </h1>
-          <p className="text-slate-400 font-manrope text-sm">
-            Votre profil : <span className="text-white capitalize">{userData?.profile}</span>
+          <p className="text-slate-500 font-manrope text-sm">
+            Votre profil : <span className="text-slate-900 capitalize">{userData?.profile}</span>
             {userData?.email && (
-              <> · <span className="text-slate-500">{userData.email}</span></>
+              <> · <span className="text-slate-400">{userData.email}</span></>
             )}
           </p>
         </div>
@@ -179,32 +179,32 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
           <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: 'all 0.7s ease 0.1s' }}>
 
             <div className="flex items-center gap-3 mb-5">
-              <div className="h-px flex-1 bg-navy-700" />
-              <h2 className="font-syne font-700 text-white text-lg whitespace-nowrap flex items-center gap-2">
+              <div className="h-px flex-1 bg-slate-200" />
+              <h2 className="font-syne font-700 text-slate-900 text-lg whitespace-nowrap flex items-center gap-2">
                 <Users size={16} className="text-cyan-scan" />
                 Vision collective — {userData?.company}
               </h2>
-              <div className="h-px flex-1 bg-navy-700" />
+              <div className="h-px flex-1 bg-slate-200" />
             </div>
 
             {loadingCompany ? (
               <div className="glass rounded-2xl p-8 flex items-center justify-center gap-3">
-                <div className="w-5 h-5 border-2 border-navy-600 border-t-electric rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-slate-200 border-t-electric rounded-full animate-spin" />
                 <span className="text-slate-500 font-manrope text-sm">Chargement des données entreprise…</span>
               </div>
             ) : companyStats ? (
               <div className="grid md:grid-cols-[160px_1fr] gap-6 items-center">
                 {/* Company global score */}
                 <div className="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center glow-teal md:self-stretch">
-                  <span className="text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-widest mb-2">
+                  <span className="text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-widest mb-2">
                     Score entreprise
                   </span>
                   <span className="font-syne font-800 text-5xl leading-none mb-1"
                     style={{ color: plasticityLevel(companyStats.globalAvg).color }}>
                     {companyStats.globalAvg}
                   </span>
-                  <span className="text-slate-500 font-manrope text-sm mb-3">/ 9</span>
-                  <div className="w-full bg-navy-700 rounded-full h-1.5 overflow-hidden mb-3">
+                  <span className="text-slate-400 font-manrope text-sm mb-3">/ 9</span>
+                  <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden mb-3">
                     <div className="h-full rounded-full"
                       style={{
                         width: visible ? `${(companyStats.globalAvg / 9) * 100}%` : '0%',
@@ -216,7 +216,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                     style={{ background: plasticityLevel(companyStats.globalAvg).color + '20', color: plasticityLevel(companyStats.globalAvg).color }}>
                     {plasticityLevel(companyStats.globalAvg).label}
                   </span>
-                  <p className="text-slate-600 text-[11px] font-manrope mt-3">
+                  <p className="text-slate-400 text-[11px] font-manrope mt-3">
                     {companyStats.n} réponse{companyStats.n > 1 ? 's' : ''}
                   </p>
                 </div>
@@ -231,7 +231,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       <PolarGrid stroke="rgba(20,184,166,0.15)" gridType="polygon" />
                       <PolarAngleAxis dataKey="dimension" tick={<CustomAngleAxis />} />
                       <PolarRadiusAxis angle={90} domain={[0, 9]} tickCount={4}
-                        tick={{ fontSize: 9, fill: '#475569' }} axisLine={false} />
+                        tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} />
                       <Radar dataKey="score" stroke="#14B8A6" strokeWidth={2}
                         fill="url(#companyRadarFill)" fillOpacity={0.4} />
                       <defs>
@@ -246,7 +246,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
               </div>
             ) : (
               <div className="glass rounded-2xl px-6 py-8 text-center">
-                <Users size={24} className="text-navy-600 mx-auto mb-2" />
+                <Users size={24} className="text-slate-300 mx-auto mb-2" />
                 <p className="text-slate-500 font-manrope text-sm">
                   Vous êtes le premier à compléter ce diagnostic pour {userData?.company}.<br />
                   Les données collectives s'afficheront dès qu'il y aura plusieurs réponses.
@@ -266,7 +266,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                           <div className="text-[10px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-0.5">
                             Dim. {dim.id}
                           </div>
-                          <div className="font-manrope font-600 text-white text-sm leading-tight">
+                          <div className="font-manrope font-600 text-slate-900 text-sm leading-tight">
                             {dim.shortName}
                           </div>
                         </div>
@@ -277,10 +277,10 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       {/* Company bar */}
                       <div className="mb-1">
                         <div className="flex items-center justify-between mb-0.5">
-                          <span className="text-[9px] font-manrope text-slate-600 uppercase tracking-wider">Collectif</span>
-                          <span className="text-[9px] font-manrope text-slate-500">{dim.avg}/9</span>
+                          <span className="text-[9px] font-manrope text-slate-400 uppercase tracking-wider">Collectif</span>
+                          <span className="text-[9px] font-manrope text-slate-400">{dim.avg}/9</span>
                         </div>
-                        <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+                        <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
                           <div className="h-full rounded-full"
                             style={{ width: visible ? `${(dim.avg / 9) * 100}%` : '0%', background: dim.color, transition: `width 0.8s ease ${0.4 + dim.id * 0.06}s`, opacity: 0.85 }} />
                         </div>
@@ -289,12 +289,12 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       {personal && (
                         <div>
                           <div className="flex items-center justify-between mb-0.5">
-                            <span className="text-[9px] font-manrope text-slate-600 uppercase tracking-wider">Vous</span>
-                            <span className="text-[9px] font-manrope text-slate-500">{personal.score}/9</span>
+                            <span className="text-[9px] font-manrope text-slate-400 uppercase tracking-wider">Vous</span>
+                            <span className="text-[9px] font-manrope text-slate-400">{personal.score}/9</span>
                           </div>
-                          <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+                          <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
                             <div className="h-full rounded-full"
-                              style={{ width: visible ? `${(personal.score / 9) * 100}%` : '0%', background: '#64748B', transition: `width 0.8s ease ${0.5 + dim.id * 0.06}s`, opacity: 0.6 }} />
+                              style={{ width: visible ? `${(personal.score / 9) * 100}%` : '0%', background: '#94A3B8', transition: `width 0.8s ease ${0.5 + dim.id * 0.06}s`, opacity: 0.6 }} />
                           </div>
                         </div>
                       )}
@@ -310,11 +310,11 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
         {userData?.companyId && companyStats && (
           <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease 0.3s' }}>
             <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-navy-700" />
+              <div className="h-px flex-1 bg-slate-200" />
               <p className="text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-widest whitespace-nowrap">
                 Votre contribution personnelle
               </p>
-              <div className="h-px flex-1 bg-navy-700" />
+              <div className="h-px flex-1 bg-slate-200" />
             </div>
           </div>
         )}
@@ -326,7 +326,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
         >
           {/* Global score */}
           <div className="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center glow-blue md:self-stretch">
-            <span className="text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-widest mb-3">
+            <span className="text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-widest mb-3">
               Score global
             </span>
             <span
@@ -335,8 +335,8 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
             >
               {displayScore.toFixed(1)}
             </span>
-            <span className="text-slate-500 font-manrope text-sm">/ 9</span>
-            <div className="mt-4 w-full bg-navy-700 rounded-full h-1.5 overflow-hidden">
+            <span className="text-slate-400 font-manrope text-sm">/ 9</span>
+            <div className="mt-4 w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-1000"
                 style={{
@@ -358,7 +358,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                   angle={90}
                   domain={[0, 9]}
                   tickCount={4}
-                  tick={{ fontSize: 9, fill: '#475569' }}
+                  tick={{ fontSize: 9, fill: '#94A3B8' }}
                   axisLine={false}
                 />
                 <Radar
@@ -384,7 +384,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
         <div
           style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.25s' }}
         >
-          <h2 className="font-syne font-700 text-white text-lg mb-4">
+          <h2 className="font-syne font-700 text-slate-900 text-lg mb-4">
             Scores par dimension
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -397,7 +397,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       <div className="text-[10px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-0.5">
                         Dim. {dim.id}
                       </div>
-                      <div className="font-manrope font-600 text-white text-sm leading-tight">
+                      <div className="font-manrope font-600 text-slate-900 text-sm leading-tight">
                         {dim.shortName}
                       </div>
                     </div>
@@ -408,7 +408,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       </span>
                     </div>
                   </div>
-                  <div className="h-1 bg-navy-700 rounded-full overflow-hidden">
+                  <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{
@@ -419,7 +419,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       }}
                     />
                   </div>
-                  <div className="mt-2 text-[10px] font-manrope text-slate-600 uppercase tracking-wider">
+                  <div className="mt-2 text-[10px] font-manrope text-slate-400 uppercase tracking-wider">
                     Levier · {dim.lever}
                   </div>
                 </div>
@@ -432,12 +432,12 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
         <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.3s' }}>
 
           <div className="flex items-center gap-3 mb-5">
-            <div className="h-px flex-1 bg-navy-700" />
-            <h2 className="font-syne font-700 text-white text-lg whitespace-nowrap flex items-center gap-2">
+            <div className="h-px flex-1 bg-slate-200" />
+            <h2 className="font-syne font-700 text-slate-900 text-lg whitespace-nowrap flex items-center gap-2">
               Lecture systémique
-              <span className="text-[10px] font-manrope font-400 text-slate-500 normal-case tracking-normal">— 3 niveaux</span>
+              <span className="text-[10px] font-manrope font-400 text-slate-400 normal-case tracking-normal">— 3 niveaux</span>
             </h2>
-            <div className="h-px flex-1 bg-navy-700" />
+            <div className="h-px flex-1 bg-slate-200" />
           </div>
 
           {/* 3 level score cards */}
@@ -459,9 +459,9 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                     <span className="font-syne font-800 text-3xl leading-none" style={{ color: lv.color }}>
                       {score.toFixed(1)}
                     </span>
-                    <span className="text-slate-600 text-xs font-manrope mb-0.5">/9</span>
+                    <span className="text-slate-400 text-xs font-manrope mb-0.5">/9</span>
                   </div>
-                  <div className="h-1 bg-navy-700 rounded-full overflow-hidden mb-3">
+                  <div className="h-1 bg-slate-200 rounded-full overflow-hidden mb-3">
                     <div className="h-full rounded-full transition-all duration-1000"
                       style={{
                         width: visible ? `${(score / 9) * 100}%` : '0%',
@@ -511,17 +511,17 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                 </div>
               </div>
               <div className="flex-1">
-                <p className="font-syne font-700 text-white text-base mb-2">{narrative.tension}</p>
-                <p className="font-manrope text-sm text-slate-400 leading-relaxed">{narrative.text}</p>
+                <p className="font-syne font-700 text-slate-900 text-base mb-2">{narrative.tension}</p>
+                <p className="font-manrope text-sm text-slate-600 leading-relaxed">{narrative.text}</p>
               </div>
             </div>
           </div>
 
           {/* POC disclaimer */}
-          <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-navy-800 border border-navy-700">
-            <span className="w-1 h-1 rounded-full bg-slate-600 flex-shrink-0" />
-            <p className="text-[11px] font-manrope text-slate-600 leading-relaxed">
-              <span className="text-slate-500 font-600">Lecture indicative · Version POC</span>
+          <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200">
+            <span className="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0" />
+            <p className="text-[11px] font-manrope text-slate-500 leading-relaxed">
+              <span className="text-slate-600 font-600">Lecture indicative · Version POC</span>
               {' '}— Basée sur {Object.values(levelMeta).reduce((a, m) => a + m.questionCount, 0)} questions (distribution variable par niveau).
               La version complète mobilisera 3 questions par niveau par dimension pour une fiabilité optimale.
             </p>
@@ -533,11 +533,11 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
           style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.35s' }}
         >
           <div className="flex items-center gap-3 mb-5">
-            <div className="h-px flex-1 bg-navy-700" />
-            <h2 className="font-syne font-700 text-white text-lg whitespace-nowrap">
+            <div className="h-px flex-1 bg-slate-200" />
+            <h2 className="font-syne font-700 text-slate-900 text-lg whitespace-nowrap">
               Leviers d'action identifiés
             </h2>
-            <div className="h-px flex-1 bg-navy-700" />
+            <div className="h-px flex-1 bg-slate-200" />
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -562,17 +562,17 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
                       #{idx + 1} prioritaire
                     </span>
                   </div>
-                  <h3 className="font-syne font-700 text-white text-base mb-2">{info.title}</h3>
-                  <p className="text-slate-400 font-manrope text-sm leading-relaxed mb-4">
+                  <h3 className="font-syne font-700 text-slate-900 text-base mb-2">{info.title}</h3>
+                  <p className="text-slate-600 font-manrope text-sm leading-relaxed mb-4">
                     {info.description}
                   </p>
-                  <div className="border-t border-navy-600 pt-3">
+                  <div className="border-t border-slate-200 pt-3">
                     <p className="text-xs font-manrope text-slate-500 leading-relaxed">
                       <span className="text-cyan-scan font-600">Action · </span>
                       {info.action}
                     </p>
                   </div>
-                  <div className="mt-3 text-[11px] font-manrope text-slate-600">
+                  <div className="mt-3 text-[11px] font-manrope text-slate-400">
                     Dimensison concernée :&nbsp;
                     <span style={{ color: dim.color }}>{dim.name}</span>
                     &nbsp;({dim.score}/9)
@@ -587,8 +587,8 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 text-center py-8 border-t border-navy-700 mt-8">
-        <p className="text-slate-600 text-xs font-manrope">
+      <footer className="relative z-10 text-center py-8 border-t border-slate-200 mt-8">
+        <p className="text-slate-400 text-xs font-manrope">
           Plasticity Scan<sup className="text-[8px]">®</sup> — Diagnostic Systémique · {new Date().getFullYear()}
         </p>
       </footer>

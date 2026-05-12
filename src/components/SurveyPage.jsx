@@ -35,7 +35,7 @@ function SliderQuestion({ label, questionText, level, value, onChange }) {
         <LevelBadge level={level} />
       </div>
 
-      <p className="font-manrope font-500 text-white text-base leading-relaxed mb-8">
+      <p className="font-manrope font-500 text-slate-900 text-base leading-relaxed mb-8">
         {questionText}
       </p>
 
@@ -49,8 +49,8 @@ function SliderQuestion({ label, questionText, level, value, onChange }) {
         <div className="flex justify-between mt-2 px-0.5">
           {Array.from({ length: 10 }, (_, i) => (
             <div key={i} className={`flex flex-col items-center gap-1 transition-all ${i === value ? 'scale-110' : ''}`}>
-              <div className={`w-0.5 h-1.5 rounded-full transition-colors ${i <= value ? 'bg-electric' : 'bg-navy-600'}`} />
-              <span className={`text-[10px] font-manrope transition-colors ${i === value ? 'text-electric font-700' : 'text-slate-600'}`}>
+              <div className={`w-0.5 h-1.5 rounded-full transition-colors ${i <= value ? 'bg-electric' : 'bg-slate-200'}`} />
+              <span className={`text-[10px] font-manrope transition-colors ${i === value ? 'text-electric font-700' : 'text-slate-400'}`}>
                 {i}
               </span>
             </div>
@@ -69,7 +69,7 @@ function SliderQuestion({ label, questionText, level, value, onChange }) {
           style={{
             background: `rgba(59,130,246,${0.1 + (value / 9) * 0.15})`,
             border: `1px solid rgba(59,130,246,${0.2 + (value / 9) * 0.4})`,
-            color: `hsl(${195 + (value / 9) * 25}, 80%, ${55 + (value / 9) * 10}%)`,
+            color: `hsl(${195 + (value / 9) * 25}, 80%, ${45 + (value / 9) * 10}%)`,
           }}
         >
           {value}
@@ -160,17 +160,17 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
     <div className="min-h-screen mesh-bg dot-grid flex flex-col">
 
       {/* ── Top bar ── */}
-      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-navy-700">
-        <span className="font-syne font-700 text-white text-sm tracking-[0.15em] uppercase opacity-80">
+      <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-slate-200 bg-white/80">
+        <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.15em] uppercase opacity-80">
           Plasticity Scan<sup className="text-electric text-[10px]">®</sup>
         </span>
         <span className="text-slate-500 text-sm font-manrope">
-          Dimension <span className="text-white font-600">{dimIndex + 1}</span> / {totalDims}
+          Dimension <span className="text-slate-900 font-600">{dimIndex + 1}</span> / {totalDims}
         </span>
       </header>
 
       {/* ── Progress bar ── */}
-      <div className="h-1 bg-navy-700 flex-shrink-0">
+      <div className="h-1 bg-slate-200 flex-shrink-0">
         <div className="h-full bg-gradient-to-r from-electric to-cyan-scan transition-all duration-500 ease-out"
           style={{ width: `${overallProgress}%` }} />
       </div>
@@ -187,7 +187,7 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
             {dimensions.map((_, i) => (
               <div key={i} className="rounded-full transition-all duration-300"
                 style={{ width: i === dimIndex ? 20 : 6, height: 6,
-                  background: i < dimIndex ? '#14B8A6' : i === dimIndex ? '#3B82F6' : '#1E293B' }} />
+                  background: i < dimIndex ? '#14B8A6' : i === dimIndex ? '#3B82F6' : '#E2E8F0' }} />
             ))}
           </div>
 
@@ -196,7 +196,7 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
             Dimension {dim.id} · {dim.shortName}
           </div>
 
-          <h2 className="font-syne font-700 text-white text-2xl md:text-3xl mb-4">{dim.name}</h2>
+          <h2 className="font-syne font-700 text-slate-900 text-2xl md:text-3xl mb-4">{dim.name}</h2>
 
           {/* Systemic intro */}
           <div className="glass-light rounded-xl px-5 py-4 text-left mb-2 relative overflow-hidden">
@@ -207,13 +207,13 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
               <span className="w-1 h-1 rounded-full inline-block" style={{ background: dim.color }} />
               Lecture systémique
             </p>
-            <p className="text-slate-400 font-manrope text-sm leading-relaxed">
+            <p className="text-slate-600 font-manrope text-sm leading-relaxed">
               {dim.systemicIntro}
             </p>
 
             {/* Level indicators for this dimension */}
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-navy-700">
-              <span className="text-[10px] text-slate-600 font-manrope uppercase tracking-wider">Niveaux évalués :</span>
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200">
+              <span className="text-[10px] text-slate-400 font-manrope uppercase tracking-wider">Niveaux évalués :</span>
               {dim.questionLevels.map((level) => (
                 <LevelBadge key={level} level={level} />
               ))}
@@ -243,7 +243,7 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
         {/* Navigation */}
         <div className="flex items-center justify-between w-full mt-8 gap-4">
           <button onClick={goPrev} disabled={dimIndex === 0}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl border border-navy-600 text-slate-400 font-manrope font-600 text-sm hover:border-electric/40 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+            className="flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 bg-white text-slate-500 font-manrope font-600 text-sm hover:border-electric/40 hover:text-slate-900 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
             <ChevronLeft size={16} /> Précédent
           </button>
           <button onClick={goNext}
@@ -253,7 +253,7 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
         </div>
 
         {userData && (
-          <p className="mt-8 text-slate-600 text-xs font-manrope text-center">
+          <p className="mt-8 text-slate-400 text-xs font-manrope text-center">
             {userData.company} · {userData.profile}
           </p>
         )}

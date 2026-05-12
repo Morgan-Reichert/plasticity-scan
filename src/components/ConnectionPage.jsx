@@ -60,8 +60,8 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
         style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(20,184,166,0.06) 0%, transparent 50%)' }} />
 
       {/* Header */}
-      <header className="relative z-10 px-6 md:px-12 py-5 flex items-center justify-between border-b border-navy-700">
-        <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-manrope transition-colors">
+      <header className="relative z-10 px-6 md:px-12 py-5 flex items-center justify-between border-b border-slate-200 bg-white/80">
+        <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-manrope transition-colors">
           <ArrowLeft size={15} /> Retour
         </button>
         <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
               <Activity size={10} className="text-white" />
             </div>
           </div>
-          <span className="font-syne font-700 text-white text-sm tracking-[0.15em] uppercase">
+          <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.15em] uppercase">
             Plasticity Scan<sup className="text-electric text-[10px]">®</sup>
           </span>
         </div>
@@ -92,22 +92,22 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
           </div>
 
           <div className="text-center mb-8">
-            <h1 className="font-syne font-800 text-white text-2xl mb-2">Connexion</h1>
-            <p className="text-slate-400 font-manrope text-sm">
+            <h1 className="font-syne font-800 text-slate-900 text-2xl mb-2">Connexion</h1>
+            <p className="text-slate-500 font-manrope text-sm">
               Accès réservé aux intervenants et dirigeants d'entreprise
             </p>
           </div>
 
           {/* Tabs */}
           <div className="glass rounded-2xl overflow-hidden glow-blue">
-            <div className="flex border-b border-navy-700">
+            <div className="flex border-b border-slate-200">
               {[
                 { id: 'intervenant', label: 'Intervenant', icon: Lock },
                 { id: 'dirigeant',   label: 'Dirigeant',   icon: Building2 },
               ].map(({ id, label, icon: Icon }) => (
                 <button key={id} onClick={() => { setTab(id); setCodeError(''); setDirError('') }}
                   className={`flex-1 flex items-center justify-center gap-2 py-4 text-sm font-manrope font-600 border-b-2 transition-all ${
-                    tab === id ? 'border-electric text-white bg-electric/5' : 'border-transparent text-slate-500 hover:text-slate-300'
+                    tab === id ? 'border-electric text-slate-900 bg-electric/5' : 'border-transparent text-slate-400 hover:text-slate-600'
                   }`}>
                   <Icon size={14} />
                   {label}
@@ -121,23 +121,23 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
               {tab === 'intervenant' && (
                 <form onSubmit={handleCode} className="space-y-5">
                   <div className="text-center mb-6">
-                    <p className="text-slate-400 text-sm font-manrope leading-relaxed">
+                    <p className="text-slate-500 text-sm font-manrope leading-relaxed">
                       Accès au tableau de bord complet.<br />
                       Renseignez le code d'accès HeR Labs.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
+                    <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
                       Code d'accès
                     </label>
                     <div className="relative" style={codeShake ? { animation: 'shake 0.4s ease' } : {}}>
                       <input type={showCode ? 'text' : 'password'} value={code}
                         onChange={e => { setCode(e.target.value); setCodeError('') }}
                         placeholder="••••••••••" autoFocus
-                        className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-3 pr-11 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-3 pr-11 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
                       <button type="button" onClick={() => setShowCode(!showCode)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         {showCode ? <EyeOff size={15} /> : <Eye size={15} />}
                       </button>
                     </div>
@@ -160,33 +160,33 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
               {tab === 'dirigeant' && (
                 <form onSubmit={handleDirigeant} className="space-y-5">
                   <div className="text-center mb-6">
-                    <p className="text-slate-400 text-sm font-manrope leading-relaxed">
+                    <p className="text-slate-500 text-sm font-manrope leading-relaxed">
                       Accédez aux résultats de votre entreprise.<br />
                       Compte créé par un intervenant HeR Labs.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
+                    <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
                       Email
                     </label>
                     <input type="email" value={email}
                       onChange={e => { setEmail(e.target.value); setDirError('') }}
                       placeholder="vous@entreprise.com" autoFocus
-                      className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-3 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-3 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
                   </div>
 
                   <div>
-                    <label className="block text-slate-400 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
+                    <label className="block text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-wider mb-2">
                       Mot de passe
                     </label>
                     <div className="relative">
                       <input type={showPwd ? 'text' : 'password'} value={password}
                         onChange={e => { setPassword(e.target.value); setDirError('') }}
                         placeholder="••••••••••"
-                        className="w-full bg-navy-800 border border-navy-600 focus:border-electric rounded-xl px-4 py-3 pr-11 text-white font-manrope text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-electric rounded-xl px-4 py-3 pr-11 text-slate-900 font-manrope text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-electric/20 transition-all" />
                       <button type="button" onClick={() => setShowPwd(!showPwd)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
                       </button>
                     </div>
@@ -209,7 +209,7 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
             </div>
           </div>
 
-          <p className="text-center text-slate-700 text-xs font-manrope mt-6">
+          <p className="text-center text-slate-400 text-xs font-manrope mt-6">
             Hackathon HeR Labs 2026 · Sensup
           </p>
         </div>
