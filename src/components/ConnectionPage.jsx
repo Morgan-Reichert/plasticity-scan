@@ -71,9 +71,7 @@ export default function ConnectionPage({ onIntervenantSuccess, onDirigeantSucces
               <Activity size={10} className="text-white" />
             </div>
           </div>
-          <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.15em] uppercase">
-            Plasticity Scan<sup className="text-electric text-[10px]">®</sup>
-          </span>
+          <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="h-8 w-auto object-contain" />
         </div>
       </header>
 

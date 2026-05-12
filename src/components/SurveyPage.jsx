@@ -161,9 +161,7 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
 
       {/* ── Top bar ── */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-slate-200 bg-white/80">
-        <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.15em] uppercase opacity-80">
-          Plasticity Scan<sup className="text-electric text-[10px]">®</sup>
-        </span>
+        <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="h-8 w-auto object-contain opacity-80" />
         <span className="text-slate-500 text-sm font-manrope">
           Dimension <span className="text-slate-900 font-600">{dimIndex + 1}</span> / {totalDims}
         </span>

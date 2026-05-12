@@ -61,14 +61,32 @@ export default function App() {
     const t1 = setTimeout(() => { window.scrollTo(0, 0); setScreen('survey') },    6000)
     const t2 = setTimeout(() => { window.scrollTo(0, 0); setScreen('computing') }, 12000)
     // computing → results is handled naturally by ComputingScreen.onComplete at ~t+2.8s
+
+    // Smooth scroll during results page to progressively reveal content
+    // Phase 1 (15-22s): top — score + radar visible
+    // Phase 2 (~26s): scroll to dimensions section
+    // Phase 3 (~30s): scroll to levers / PDF section
+    const tScroll1 = setTimeout(() => {
+      window.scrollTo({ top: 600, behavior: 'smooth' })
+    }, 26000)
+    const tScroll2 = setTimeout(() => {
+      window.scrollTo({ top: 1300, behavior: 'smooth' })
+    }, 30000)
+
     const t3 = setTimeout(() => {
       window.scrollTo(0, 0)
       setAuthUser({ role: 'intervenant', email: 'demo@sensup.com' })
       setScreen('dashboard')
     }, 34000)
 
+    // Mid-dashboard scroll to reveal radar chart
+    const tScroll3 = setTimeout(() => {
+      window.scrollTo({ top: 500, behavior: 'smooth' })
+    }, 40500)
+
     return () => {
       clearTimeout(t1); clearTimeout(t2); clearTimeout(t3)
+      clearTimeout(tScroll1); clearTimeout(tScroll2); clearTimeout(tScroll3)
       document.getElementById('demo-cursor-hide')?.remove()
     }
   }, [])

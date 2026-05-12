@@ -62,9 +62,7 @@ export default function ComputingScreen({ onComplete }) {
       </div>
 
       {/* Brand */}
-      <p className="relative z-10 font-syne font-800 text-slate-900 text-xl tracking-[0.18em] uppercase mb-1">
-        Plasticity Scan<sup className="text-electric text-[11px]">®</sup>
-      </p>
+      <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="relative z-10 h-10 w-auto object-contain mb-1" />
       <p className="relative z-10 text-slate-500 text-xs font-manrope tracking-widest uppercase mb-10">
         Analyse en cours
       </p>

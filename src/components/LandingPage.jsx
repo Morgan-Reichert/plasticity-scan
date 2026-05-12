@@ -96,16 +96,14 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
                 <Activity size={12} className="text-white" />
               </div>
             </div>
-            <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.18em] uppercase">
-              Plasticity Scan<sup className="text-electric text-[10px] ml-0.5">®</sup>
-            </span>
+            <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="h-9 w-auto object-contain" />
           </div>
 
           {/* Separator + Sensup logo */}
           <div className="flex items-center gap-2.5 pl-4 relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-5 bg-slate-200" />
             <span className="text-slate-400 text-[10px] font-manrope font-600 uppercase tracking-widest">by</span>
-            <img src="/sensup-logo.png" alt="Sensup" className="h-[60px] w-auto object-contain" />
+            <img src="/sens-up-logo.png" alt="Sensup" className="h-[60px] w-auto object-contain" />
           </div>
         </div>
         <button onClick={onIntervenantAccess}

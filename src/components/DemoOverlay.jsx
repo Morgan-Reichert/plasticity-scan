@@ -21,145 +21,160 @@ function getVis(elapsed, start, end, fadeIn = 0.38, fadeOut = 0.36) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TIMELINE
-   Screen transitions: 0s landing · 6s survey · 12s computing
-                       ~14.8s results · 34s dashboard · 44s outro
-   Max 3 elements simultaneously. No element crosses a transition.
-   Banner always ends before other elements start on same screen.
+   TIMELINE — annotations ancrées sur l'UI réel
+   Transitions :  0s landing · 6s survey · 12s computing
+                  ~14.8s results · 34s dashboard · 44s outro
+   Règles : max 2 éléments flottants + 1 banner simultanés.
+            Banner se termine avant les annotations.
+            Positions calibrées sur viewport ~1440×900.
    ══════════════════════════════════════════════════════════════ */
 const TIMELINE = [
 
-  /* ── LANDING (0–6s) ─────────────────────────────────────── */
-  { id:'l-banner', type:'banner', start:0.3, end:3.3,
+  /* ─────── LANDING (0–6s) ────────────────────────────────────
+     Layout : hero à gauche (H1 + description) · form 420px à droite.
+     Form sticky au top, centre à ~x:72% y:50%.                 */
+  { id:'l-banner', type:'banner', start:0.3, end:3.4,
     title:'Diagnostic de Plasticité Organisationnelle',
-    subtitle:'Mesurez et activez la capacité d\'adaptation de votre organisation',
+    subtitle:'Mesurez la capacité d\'adaptation de votre organisation',
     color:'#3B82F6' },
 
-  { id:'l-ring', type:'ring', start:3.5, end:5.6,
-    pos:{ left:'50%', top:'30%' }, w:160, h:160, color:'#3B82F6' },
+  // Ring qui encercle TOUTE la carte formulaire à droite
+  { id:'l-ring-form', type:'ring', start:3.7, end:5.7,
+    pos:{ left:'78%', top:'52%' }, w:420, h:580, color:'#3B82F6' },
 
-  { id:'l-postit', type:'postit', start:3.7, end:5.7,
-    text:'7 dimensions\nsystémiques\n14 questions',
-    color:'#F59E0B', pos:{ top:'20%', left:'3%' }, rotate:'-4deg' },
-
-  { id:'l-arrow', type:'arrow', start:4.1, end:5.4,
+  // Flèche qui pointe DEPUIS le hero VERS le formulaire
+  { id:'l-arrow', type:'arrow', start:4.0, end:5.7,
     direction:'right', color:'#14B8A6',
-    pos:{ top:'48%', left:'28%' } },         // → CTA button
+    pos:{ top:'52%', left:'54%' } },
 
-  { id:'l-tag', type:'tag', start:4.8, end:5.7,
-    text:'⚡ 5 min · résultat immédiat',
-    color:'#F59E0B', pos:{ bottom:'20%', left:'50%', transform:'translateX(-50%)' } },
+  // Postit dans la marge gauche (zone vide au-dessus du H1)
+  { id:'l-postit', type:'postit', start:4.0, end:5.7,
+    text:'Diagnostic\nsystémique\nen 5 min',
+    color:'#F59E0B', pos:{ top:'18%', left:'3%' }, rotate:'-3deg' },
 
-  /* ── SURVEY (6–12s) ─────────────────────────────────────── */
+  /* ─────── SURVEY (6–12s) ────────────────────────────────────
+     Layout : header · barre progress · dim header centré ·
+              2 cartes question (sliders) · nav buttons.
+     Q1 card visible vers y:60%, max-w-2xl centré.              */
   { id:'s-banner', type:'banner', start:6.4, end:9.0,
-    title:'Évaluation par Dimensions',
-    subtitle:'Chaque dimension analysée à travers 3 niveaux organisationnels',
+    title:'Évaluation Multi-Niveaux',
+    subtitle:'7 dimensions · 14 questions · 3 niveaux organisationnels',
     color:'#14B8A6' },
 
-  { id:'s-ring', type:'ring', start:9.2, end:11.0,
-    pos:{ left:'72%', top:'25%' }, w:105, h:38, color:'#8B5CF6' }, // around level badge
+  // Ring oval autour de la première carte question (large rectangle)
+  { id:'s-ring-q1', type:'ring', start:9.3, end:11.6,
+    pos:{ left:'50%', top:'63%' }, w:680, h:220, color:'#3B82F6' },
 
-  { id:'s-arrow', type:'arrow', start:9.4, end:10.6,
-    direction:'down', color:'#3B82F6',
-    pos:{ top:'56%', left:'50%' } },          // ↓ toward slider
+  // Callout dans la marge gauche, explique le curseur
+  { id:'s-callout', type:'callout', start:9.6, end:11.6,
+    text:'Curseur intuitif\n0 → 9 points\nLecture systémique',
+    color:'#3B82F6', pos:{ top:'58%', left:'3%' }, from:'left' },
 
-  { id:'s-callout', type:'callout', start:9.8, end:11.7,
-    text:'Curseur intuitif\n0 → 9 points\nRéponse en glissé',
-    color:'#3B82F6', pos:{ top:'64%', left:'3%' }, from:'left' },
+  // Tag en haut à droite (zone marge à côté du dimension header)
+  { id:'s-tag', type:'tag', start:10.0, end:11.7,
+    text:'🔬 Lecture par dimension',
+    color:'#14B8A6', pos:{ top:'15%', right:'4%' } },
 
-  { id:'s-tag', type:'tag', start:10.7, end:11.7,
-    text:'🔬 Lecture systémique par dimension',
-    color:'#14B8A6', pos:{ top:'42%', left:'3%' } },
+  /* ─────── COMPUTING (12–~14.8s) ─────────────────────────────
+     Layout : centre vertical absolu. Anneaux orbitaux à y:40%,
+              logo + progress en dessous.                       */
+  // Ring autour des cercles orbitaux centraux
+  { id:'c-ring', type:'ring', start:12.4, end:14.5,
+    pos:{ left:'50%', top:'40%' }, w:360, h:360, color:'#14B8A6' },
 
-  /* ── COMPUTING (12–~14.8s) ──────────────────────────────── */
-  { id:'c-postit', type:'postit', start:12.5, end:14.5,
-    text:'Algorithme\nsystémique\nen temps réel',
-    color:'#3B82F6', pos:{ top:'16%', right:'8%' }, rotate:'3deg' },
+  // Callout en bas centré
+  { id:'c-callout', type:'callout', start:12.7, end:14.5,
+    text:'Algorithme systémique\n7 dimensions calculées\nLeviers identifiés',
+    color:'#14B8A6', pos:{ bottom:'15%', left:'50%', transform:'translateX(-50%)' }, from:'bottom' },
 
-  { id:'c-ring', type:'ring', start:12.6, end:14.5,
-    pos:{ left:'50%', top:'43%' }, w:118, h:118, color:'#14B8A6' }, // around center icon
+  // Postit dans la marge en haut à droite
+  { id:'c-postit', type:'postit', start:12.9, end:14.5,
+    text:'Analyse\nen temps\nréel',
+    color:'#3B82F6', pos:{ top:'14%', right:'5%' }, rotate:'4deg' },
 
-  { id:'c-callout', type:'callout', start:13.2, end:14.5,
-    text:'7 dimensions calculées\nLeviers prioritaires identifiés',
-    color:'#14B8A6', pos:{ bottom:'18%', left:'50%', transform:'translateX(-50%)' }, from:'bottom' },
-
-  /* ── RESULTS (~14.8–34s) ────────────────────────────────── */
-  { id:'r-banner', type:'banner', start:15.1, end:18.1,
+  /* ─────── RESULTS (~14.8–34s) ───────────────────────────────
+     Layout : header · titre · grid [160px score | 1fr radar].
+     Auto-scroll piloté par App.jsx pour révéler le contenu plus bas.
+     Phase 1 (15-22) : score + radar visibles
+     Phase 2 (22-28) : scroll vers dimensions
+     Phase 3 (28-34) : scroll vers leviers/PDF                  */
+  { id:'r-banner', type:'banner', start:15.1, end:18.0,
     title:'Profil de Plasticité Révélé',
-    subtitle:'Score global · Radar systémique · Vision collective & individuelle',
-    color:'#14B8A6' },
+    subtitle:'Score global · Radar systémique · 7 dimensions',
+    color:'#3B82F6' },
 
-  { id:'r-ring-score', type:'ring', start:18.3, end:22.0,
-    pos:{ left:'11%', top:'37%' }, w:138, h:138, color:'#F59E0B' }, // around score card
+  // Phase 1 — Score (gauche) + Radar (droite)
+  { id:'r-ring-score', type:'ring', start:18.3, end:21.8,
+    pos:{ left:'17%', top:'54%' }, w:210, h:320, color:'#F59E0B' },
 
-  { id:'r-arrow-radar', type:'arrow', start:18.5, end:20.5,
-    direction:'right', color:'#3B82F6',
-    pos:{ top:'40%', left:'22%' } },          // → toward radar
+  { id:'r-arrow-score', type:'arrow', start:18.6, end:21.5,
+    direction:'left', color:'#F59E0B',
+    pos:{ top:'54%', left:'29%' } },
 
-  { id:'r-callout-radar', type:'callout', start:19.5, end:26.5,
-    text:'Radar systémique\n7 dimensions visualisées\nen un coup d\'œil',
-    color:'#3B82F6', pos:{ top:'28%', right:'3%' }, from:'right' },
+  { id:'r-callout-score', type:'callout', start:19.0, end:21.8,
+    text:'Score global\npersonnalisé\nsur 9 points',
+    color:'#F59E0B', pos:{ top:'30%', left:'3%' }, from:'left' },
 
-  { id:'r-postit-score', type:'postit', start:20.5, end:25.0,
-    text:'Score global\npersonnalisé\nsur 9',
-    color:'#F59E0B', pos:{ top:'24%', left:'3%' }, rotate:'-4deg' },
+  // Phase 1b — Radar
+  { id:'r-ring-radar', type:'ring', start:22.0, end:25.8,
+    pos:{ left:'58%', top:'54%' }, w:620, h:340, color:'#3B82F6' },
 
-  { id:'r-ring-col', type:'ring', start:24.5, end:28.5,
-    pos:{ left:'50%', top:'20%' }, w:240, h:46, color:'#14B8A6' }, // around section title
+  { id:'r-callout-radar', type:'callout', start:22.4, end:25.8,
+    text:'Radar systémique\n7 dimensions\nvisualisées',
+    color:'#3B82F6', pos:{ top:'30%', right:'3%' }, from:'right' },
 
-  { id:'r-callout-col', type:'callout', start:25.5, end:29.5,
-    text:'Vision collective\ncomparée à votre profil\nindividuel',
-    color:'#14B8A6', pos:{ top:'44%', left:'3%' }, from:'left' },
+  // Phase 2 — Après scroll : Dimensions
+  { id:'r-postit-dim', type:'postit', start:26.5, end:29.5,
+    text:'7 dimensions\nanalysées\nséparément',
+    color:'#8B5CF6', pos:{ top:'18%', right:'4%' }, rotate:'3deg' },
 
-  { id:'r-arrow-levers', type:'arrow', start:27.5, end:30.0,
-    direction:'down', color:'#8B5CF6',
-    pos:{ top:'48%', left:'50%' } },          // ↓ toward levers section
+  { id:'r-callout-dim', type:'callout', start:27.0, end:29.5,
+    text:'Profil par dimension\navec niveau de plasticité',
+    color:'#8B5CF6', pos:{ top:'48%', left:'3%' }, from:'left' },
 
-  { id:'r-callout-levers', type:'callout', start:28.5, end:33.0,
-    text:'Leviers d\'action\nprioritaires identifiés\nautomatiquement',
-    color:'#8B5CF6', pos:{ top:'54%', right:'3%' }, from:'right' },
+  // Phase 3 — Après second scroll : Leviers + PDF
+  { id:'r-callout-levers', type:'callout', start:30.0, end:33.0,
+    text:'Leviers d\'action\nprioritaires\nidentifiés par l\'IA',
+    color:'#14B8A6', pos:{ top:'35%', left:'3%' }, from:'left' },
 
-  { id:'r-tag-pdf', type:'tag', start:30.5, end:33.7,
-    text:'📄 Rapport PDF · Analyse IA Mistral',
-    color:'#EF4444', pos:{ bottom:'24%', left:'4%' } },
+  { id:'r-postit-pdf', type:'postit', start:30.3, end:33.5,
+    text:'Rapport PDF\nIA Mistral\ninclus',
+    color:'#EF4444', pos:{ top:'20%', right:'4%' }, rotate:'-3deg' },
 
-  { id:'r-callout-ai', type:'callout', start:31.8, end:33.7,
-    text:'Débrief IA Mistral\nPersonnalisé & actionnable',
-    color:'#F59E0B', pos:{ bottom:'24%', right:'3%' }, from:'right' },
+  { id:'r-tag-export', type:'tag', start:31.5, end:33.7,
+    text:'📄 Export PDF · Débrief IA personnalisé',
+    color:'#F59E0B', pos:{ bottom:'12%', left:'50%', transform:'translateX(-50%)' } },
 
-  /* ── DASHBOARD (34–44s) ──────────────────────────────────── */
-  { id:'d-banner', type:'banner', start:34.3, end:37.4,
+  /* ─────── DASHBOARD (34–44s) ────────────────────────────────
+     Layout : header · filter bar · 4 KPI cards en row ·
+              grid [Profil moyen | Réponses détaillées].
+     KPI row visible vers y:25%, charts vers y:60%.             */
+  { id:'d-banner', type:'banner', start:34.3, end:37.2,
     title:'Tableau de Bord Intervenants',
-    subtitle:'Vue agrégée multi-entreprises · Analyse IA · Export PDF intelligent',
+    subtitle:'Vue agrégée multi-entreprises · Export PDF · Analyse IA',
     color:'#8B5CF6' },
 
-  { id:'d-ring-kpi', type:'ring', start:37.6, end:40.5,
-    pos:{ left:'38%', top:'22%' }, w:185, h:78, color:'#3B82F6' }, // around KPI cards
+  // Ring large autour de la rangée des 4 KPIs
+  { id:'d-ring-kpi', type:'ring', start:37.5, end:40.5,
+    pos:{ left:'50%', top:'30%' }, w:1100, h:150, color:'#3B82F6' },
 
-  { id:'d-arrow-chart', type:'arrow', start:38.0, end:40.0,
-    direction:'right', color:'#14B8A6',
-    pos:{ top:'38%', left:'20%' } },          // → toward radar chart
+  { id:'d-callout-kpi', type:'callout', start:37.9, end:40.5,
+    text:'KPIs agrégés\nen temps réel\nmulti-clients',
+    color:'#3B82F6', pos:{ top:'56%', left:'3%' }, from:'left' },
 
-  { id:'d-callout-kpi', type:'callout', start:38.5, end:43.0,
-    text:'Scores agrégés\npar entreprise en temps réel',
-    color:'#3B82F6', pos:{ top:'30%', left:'3%' }, from:'left' },
+  // Ring autour du radar du profil moyen (à gauche dans la grid)
+  { id:'d-ring-chart', type:'ring', start:40.8, end:43.5,
+    pos:{ left:'30%', top:'65%' }, w:430, h:280, color:'#14B8A6' },
 
-  { id:'d-ring-chart', type:'ring', start:40.0, end:43.0,
-    pos:{ left:'30%', top:'50%' }, w:200, h:160, color:'#14B8A6' }, // around radar
+  { id:'d-callout-chart', type:'callout', start:41.2, end:43.5,
+    text:'Profil moyen\npar entreprise\nvisualisé',
+    color:'#14B8A6', pos:{ top:'40%', right:'4%' }, from:'right' },
 
-  { id:'d-postit', type:'postit', start:40.5, end:43.5,
-    text:'Données\nen temps\nréel',
-    color:'#14B8A6', pos:{ top:'44%', right:'3%' }, rotate:'2deg' },
+  { id:'d-tag', type:'tag', start:41.8, end:43.7,
+    text:'🏢 Gestion multi-entreprises · Export PDF',
+    color:'#F59E0B', pos:{ bottom:'8%', left:'50%', transform:'translateX(-50%)' } },
 
-  { id:'d-tag', type:'tag', start:41.5, end:43.5,
-    text:'🏢 Gestion multi-entreprises',
-    color:'#F59E0B', pos:{ bottom:'26%', left:'4%' } },
-
-  { id:'d-callout-pdf', type:'callout', start:42.0, end:43.7,
-    text:'Export PDF intelligent\nAnalyse IA Mistral incluse',
-    color:'#EF4444', pos:{ bottom:'18%', right:'3%' }, from:'right' },
-
-  /* ── OUTRO (44s+) ─────────────────────────────────────────── */
+  /* ─────── OUTRO (44s+) ────────────────────────────────────── */
   { id:'outro', type:'outro', start:44.0, end:999 },
 ]
 
@@ -434,7 +449,7 @@ function Outro({ vis }) {
         <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:14, marginBottom:28 }}>
           <span style={{ fontFamily:'Manrope,sans-serif', fontSize:13, color:'#475569',
             textTransform:'uppercase', letterSpacing:'0.3em', fontWeight:700 }}>by</span>
-          <img src="/sensup-logo.png" alt="Sensup"
+          <img src="/sens-up-logo.png" alt="Sensup"
             style={{ height:76, width:'auto', objectFit:'contain', opacity:0.9 }} />
         </div>
 

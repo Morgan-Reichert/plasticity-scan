@@ -137,9 +137,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
 
       {/* ── Header ── */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-slate-200 bg-white/80">
-        <span className="font-syne font-700 text-slate-900 text-sm tracking-[0.15em] uppercase">
-          Plasticity Scan<sup className="text-electric text-[10px]">®</sup>
-        </span>
+        <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="h-8 w-auto object-contain" />
         <button
           onClick={onRestart}
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-manrope transition-colors"
