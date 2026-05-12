@@ -87,23 +87,15 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
 
       {/* ── Header ── */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6 bg-white/80 border-b border-slate-200">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           {/* Plasticity Scan logo */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-9 h-9 flex items-center justify-center">
-              <span className="absolute inset-0 rounded-full bg-electric/20 animate-pulseRing" />
-              <div className="relative w-6 h-6 rounded-full bg-gradient-to-br from-electric to-cyan-scan flex items-center justify-center">
-                <Activity size={12} className="text-white" />
-              </div>
-            </div>
-            <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="h-9 w-auto object-contain" />
-          </div>
+          <img src="/plasticity-scan-logo.png" alt="Plasticity Scan" className="h-[72px] w-auto object-contain" />
 
           {/* Separator + Sensup logo */}
-          <div className="flex items-center gap-2.5 pl-4 relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-5 bg-slate-200" />
+          <div className="flex items-center gap-2.5 pl-5 relative">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-6 bg-slate-200" />
             <span className="text-slate-400 text-[10px] font-manrope font-600 uppercase tracking-widest">by</span>
-            <img src="/sens-up-logo.png" alt="Sensup" className="h-[60px] w-auto object-contain" />
+            <img src="/sens-up-logo.png" alt="Sensup" className="h-10 w-auto object-contain" />
           </div>
         </div>
         <button onClick={onIntervenantAccess}
