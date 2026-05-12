@@ -87,12 +87,10 @@ const TIMELINE = [
     color:'#14B8A6', pos:{ top:'13%', right:'4%' } },
 
   /* ─── COMPUTING (12–~14.8s) ──────────────────────────────── */
-  { id:'c-ring-center', type:'box', start:12.4, end:14.5,
-    anchor:'computing-center', color:'#14B8A6', pad:120, circle:true },
-
-  { id:'c-callout', type:'callout', start:12.7, end:14.5,
+  // Pas d'anneau ici — le visuel de scan est déjà central et envoutant.
+  { id:'c-callout', type:'callout', start:12.5, end:14.5,
     text:'Algorithme systémique\n7 dimensions calculées\nLeviers identifiés',
-    color:'#14B8A6', pos:{ bottom:'15%', left:'50%', transform:'translateX(-50%)' }, from:'bottom' },
+    color:'#14B8A6', pos:{ bottom:'18%', left:'50%', transform:'translateX(-50%)' }, from:'bottom' },
 
   { id:'c-postit', type:'postit', start:12.9, end:14.5,
     text:'Analyse\ntemps\nréel',
@@ -591,7 +589,9 @@ function Outro({ vis, elapsed }) {
    ══════════════════════════════════════════════════════════════ */
 export default function DemoOverlay() {
   const [elapsed, setElapsed] = useState(0)
+  const [zoomTarget, setZoomTarget] = useState(null)  // { cx, cy } for zoom focus
   const startRef = useRef(null)
+  const lastAnchorRef = useRef(null)
 
   useEffect(() => {
     startRef.current = performance.now()
@@ -608,6 +608,40 @@ export default function DemoOverlay() {
   const activeItems = TIMELINE.filter(
     item => elapsed >= item.start && elapsed < item.end + FADE_OUT
   )
+
+  /* ── Auto-scroll to center the dominant anchored element ──
+     Whenever the earliest active anchored item changes, smoothly
+     scroll the page so that element is centered. Also triggers a
+     subtle zoom-pulse effect on the body for cinematic emphasis. */
+  const dominantAnchorItem = activeItems
+    .filter(i => (i.type === 'box' || i.type === 'arrow-to') && i.anchor)
+    .sort((a, b) => a.start - b.start)[0]
+  const dominantAnchor = dominantAnchorItem?.anchor ?? null
+
+  useEffect(() => {
+    if (!dominantAnchor) {
+      lastAnchorRef.current = null
+      return
+    }
+    if (dominantAnchor === lastAnchorRef.current) return
+    lastAnchorRef.current = dominantAnchor
+
+    // Defer briefly so the new content has rendered
+    const id = setTimeout(() => {
+      const el = document.querySelector(`[data-demo="${dominantAnchor}"]`)
+      if (!el) return
+      el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' })
+
+      // Trigger a brief zoom-pulse focus on this element
+      const r = el.getBoundingClientRect()
+      setZoomTarget({ cx: r.left + r.width / 2, cy: r.top + r.height / 2, ts: performance.now() })
+    }, 120)
+    return () => clearTimeout(id)
+  }, [dominantAnchor])
+
+  /* Compute zoom-pulse opacity that fades over ~1.2s after each anchor change */
+  const zoomAge = zoomTarget ? (performance.now() - zoomTarget.ts) / 1000 : 999
+  const zoomOpacity = zoomAge < 1.2 ? (1 - zoomAge / 1.2) * 0.35 : 0
 
   const renderItem = (item) => {
     const vis = getVis(elapsed, item.start, item.end)
@@ -638,8 +672,22 @@ export default function DemoOverlay() {
     }
   }
 
+  /* Zoom-pulse overlay: subtle vignette + expanding glow on focused element */
+  const zoomPulse = zoomOpacity > 0.01 && zoomTarget ? (
+    <div key="zoom-pulse" style={{
+      position:'fixed', inset:0, zIndex:9990, pointerEvents:'none',
+      opacity: zoomOpacity,
+      background:`radial-gradient(circle at ${zoomTarget.cx}px ${zoomTarget.cy}px,
+        rgba(59,130,246,0.18) 0px,
+        rgba(59,130,246,0.06) 220px,
+        rgba(2,4,12,0.35) 700px,
+        rgba(2,4,12,0.55) 1400px)`,
+      transition:'opacity 0.4s ease',
+    }} />
+  ) : null
+
   return createPortal(
-    <>{activeItems.map(renderItem)}</>,
+    <>{zoomPulse}{activeItems.map(renderItem)}</>,
     document.body
   )
 }

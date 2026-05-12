@@ -38,6 +38,18 @@ export default {
           '0%, 100%': { transform: 'scale(1)', opacity: '0.6' },
           '50%': { transform: 'scale(1.4)', opacity: '0' },
         },
+        pulseOut: {
+          '0%':   { transform: 'scale(0.7)', opacity: '0.6' },
+          '100%': { transform: 'scale(2.0)', opacity: '0' },
+        },
+        scanSweep: {
+          '0%':   { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        coreBreathe: {
+          '0%, 100%': { transform: 'scale(1)',     filter: 'brightness(1)' },
+          '50%':       { transform: 'scale(1.08)',  filter: 'brightness(1.25)' },
+        },
         shimmer: {
           '0%': { backgroundPosition: '-200% center' },
           '100%': { backgroundPosition: '200% center' },
@@ -46,6 +58,9 @@ export default {
       animation: {
         fadeInUp: 'fadeInUp 0.6s ease forwards',
         pulseRing: 'pulseRing 2s ease-in-out infinite',
+        pulseOut:  'pulseOut 3s ease-out infinite',
+        scanSweep: 'scanSweep 2.5s linear infinite',
+        coreBreathe:'coreBreathe 2.4s ease-in-out infinite',
         shimmer: 'shimmer 3s ease infinite',
       },
     },
