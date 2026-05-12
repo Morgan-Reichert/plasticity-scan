@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Cell,
@@ -64,35 +65,46 @@ export default function PdfReport({ stats, filteredScans, companies, companyFilt
   const radarData = stats?.dimAvgs.map(d => ({ dimension: d.shortName, score: d.avg, fullMark: 9 }))
   const barData   = stats?.dimAvgs.map(d => ({ name: d.name, score: d.avg, fill: d.color }))
 
-  return (
-    <>
-      {/* ── Print stylesheet injected inline ── */}
+  /* ── Render as a Portal directly into document.body so that
+       `body > *:not(#pdf-report-root)` correctly hides #root ── */
+  return createPortal(
+    <div id="pdf-report-root" ref={ref}>
+
+      {/* ── Print stylesheet ── */}
       <style>{`
         @media print {
           html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
           body > *:not(#pdf-report-root) { display: none !important; }
-          #pdf-report-root { display: block !important; }
-          @page { size: A4; margin: 12mm 14mm; }
+          #pdf-report-root {
+            position: static !important;
+            background: transparent !important;
+            padding: 0 !important;
+            overflow: visible !important;
+          }
+          .pdf-close-btn { display: none !important; }
+          @page { size: A4; margin: 10mm 12mm; }
         }
         @media screen {
           #pdf-report-root {
             position: fixed; inset: 0; z-index: 9999;
-            background: rgba(0,0,0,0.85);
+            background: rgba(10,15,28,0.92);
             display: flex; align-items: flex-start; justify-content: center;
-            overflow-y: auto; padding: 32px 16px;
+            overflow-y: auto; padding: 40px 16px 60px;
           }
         }
       `}</style>
 
-      <div id="pdf-report-root" ref={ref}>
-
-        {/* ── Screen wrapper (close button) ── */}
-        <div className="no-print" style={{ position: 'fixed', top: 16, right: 16, zIndex: 10001 }}>
-          <button onClick={onClose}
-            style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer', fontFamily: 'Manrope, sans-serif' }}>
-            ✕ Fermer
-          </button>
-        </div>
+      {/* Close button (screen only) */}
+      <button className="pdf-close-btn" onClick={onClose} style={{
+        position: 'fixed', top: 18, right: 18, zIndex: 10001,
+        background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.2)', color: '#fff',
+        borderRadius: 10, padding: '7px 18px', fontSize: 13,
+        cursor: 'pointer', fontFamily: 'Manrope, sans-serif', fontWeight: 600,
+        display: 'flex', alignItems: 'center', gap: 8,
+      }}>
+        ✕ Fermer l'aperçu
+      </button>
 
         {/* ══════════ A4 PAPER ══════════ */}
         <div style={{
@@ -339,7 +351,7 @@ export default function PdfReport({ stats, filteredScans, companies, companyFilt
 
         </div>
         {/* end A4 paper */}
-      </div>
-    </>
+      </div>,
+    document.body
   )
 }
