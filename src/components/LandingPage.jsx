@@ -102,7 +102,8 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
           </div>
 
           {/* Separator + Sensup logo */}
-          <div className="flex items-center gap-2.5 border-l border-navy-600 pl-4">
+          <div className="flex items-center gap-2.5 pl-4 relative">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-5 bg-navy-600" />
             <span className="text-slate-600 text-[10px] font-manrope font-600 uppercase tracking-widest">by</span>
             <img src="/sensup-logo.png" alt="Sensup" className="h-[60px] w-auto object-contain" />
           </div>
