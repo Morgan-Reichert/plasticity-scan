@@ -46,18 +46,16 @@ export default function App() {
     const t1 = setTimeout(() => {
       setUserData(DEMO_USER)
       setScreen('survey')
-    }, 3500)
+    }, 4000)
 
     const t2 = setTimeout(() => {
-      setScreen('computing')
-    }, 9000)
-
-    const t3 = setTimeout(() => {
+      // Set responses BEFORE computing screen so ResultsPage
+      // is ready when ComputingScreen calls onComplete
       setResponses(DEMO_RESPONSES)
-      setScreen('results')
-    }, 12000)
+      setScreen('computing')
+    }, 10000)
 
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
   /* ── Normal handlers ── */
