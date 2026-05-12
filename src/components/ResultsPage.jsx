@@ -52,6 +52,7 @@ export default function ResultsPage({ userData, responses, onRestart }) {
     const t = setTimeout(() => setVisible(true), 100)
     saveSession({
       company: userData?.company,
+      company_id: userData?.companyId ?? null,
       email: userData?.email,
       profile: userData?.profile,
       responses,
