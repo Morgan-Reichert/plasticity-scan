@@ -1,10 +1,10 @@
 /**
  * Vercel Serverless Function — /api/generate-debrief
- * Calls the Anthropic Claude API to generate a structured
+ * Calls the Mistral AI API to generate a structured
  * intervention debrief based on Plasticity Scan® results.
  *
  * Required env var (set in Vercel dashboard):
- *   ANTHROPIC_API_KEY
+ *   MISTRAL_API_KEY
  */
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -14,8 +14,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY non configurée.' })
+  const apiKey = process.env.MISTRAL_API_KEY
+  if (!apiKey) return res.status(500).json({ error: 'MISTRAL_API_KEY non configurée.' })
 
   const { companyName, n, globalAvg, globalLevel, dimensions, levers, profiles } = req.body
 
@@ -87,29 +87,37 @@ Réponds UNIQUEMENT avec un objet JSON brut (pas de markdown, pas de code block)
 }`
 
   try {
-    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+    const mistralRes = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
-        max_tokens: 2000,
+        model: 'mistral-large-latest',
         temperature: 0.6,
-        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2000,
+        messages: [
+          {
+            role: 'system',
+            content: 'Tu es un expert en diagnostics organisationnels systémiques. Tu réponds uniquement en JSON brut, sans markdown ni code block.',
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
       }),
     })
 
-    if (!anthropicRes.ok) {
-      const errText = await anthropicRes.text()
-      console.error('[generate-debrief] Anthropic error:', errText)
-      return res.status(502).json({ error: 'Erreur API Anthropic', detail: errText })
+    if (!mistralRes.ok) {
+      const errText = await mistralRes.text()
+      console.error('[generate-debrief] Mistral error:', errText)
+      return res.status(502).json({ error: 'Erreur API Mistral', detail: errText })
     }
 
-    const result = await anthropicRes.json()
-    const rawText = result.content?.[0]?.text ?? ''
+    const result = await mistralRes.json()
+    const rawText = result.choices?.[0]?.message?.content ?? ''
 
     // Extract JSON — handle potential markdown wrapping
     const jsonMatch = rawText.match(/\{[\s\S]*\}/)
