@@ -87,16 +87,25 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
 
       {/* ── Header ── */}
       <header className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
-        <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 flex items-center justify-center">
-            <span className="absolute inset-0 rounded-full bg-electric/20 animate-pulseRing" />
-            <div className="relative w-6 h-6 rounded-full bg-gradient-to-br from-electric to-cyan-scan flex items-center justify-center">
-              <Activity size={12} className="text-white" />
+        <div className="flex items-center gap-4">
+          {/* Plasticity Scan logo */}
+          <div className="flex items-center gap-3">
+            <div className="relative w-9 h-9 flex items-center justify-center">
+              <span className="absolute inset-0 rounded-full bg-electric/20 animate-pulseRing" />
+              <div className="relative w-6 h-6 rounded-full bg-gradient-to-br from-electric to-cyan-scan flex items-center justify-center">
+                <Activity size={12} className="text-white" />
+              </div>
             </div>
+            <span className="font-syne font-700 text-white text-sm tracking-[0.18em] uppercase">
+              Plasticity Scan<sup className="text-electric text-[10px] ml-0.5">®</sup>
+            </span>
           </div>
-          <span className="font-syne font-700 text-white text-sm tracking-[0.18em] uppercase">
-            Plasticity Scan<sup className="text-electric text-[10px] ml-0.5">®</sup>
-          </span>
+
+          {/* Separator + Sensup logo */}
+          <div className="flex items-center gap-2.5 border-l border-navy-600 pl-4">
+            <span className="text-slate-600 text-[10px] font-manrope font-600 uppercase tracking-widest">by</span>
+            <img src="/sensup-logo.png" alt="Sensup" className="h-6 w-auto object-contain" />
+          </div>
         </div>
         <button onClick={onIntervenantAccess}
           className="hidden md:flex items-center gap-2 text-slate-500 hover:text-slate-300 text-xs font-manrope tracking-wider uppercase transition-colors group">
