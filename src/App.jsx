@@ -32,30 +32,24 @@ export default function App() {
   const [authUser, setAuthUser]   = useState(null)
   const [isDemo, setIsDemo]       = useState(false)
 
-  /* ── Demo mode: triggered by ?demo in URL ── */
+  /* ── Demo mode: triggered by ?demo in URL ──
+     Sequence: landing (5s) → computing (3s) → results (auto-scroll)
+     No survey in demo — keeps it bulletproof for pitch recording ── */
   useEffect(() => {
     if (!window.location.search.includes('demo')) return
     setIsDemo(true)
 
-    // t=0s   : landing page (already showing)
-    // t=3.5s : jump into survey with demo user
-    // t=9s   : show computing screen
-    // t=12s  : show results
-    // t=28s  : show dashboard (quick glimpse)
+    // Pre-load data immediately so ResultsPage is ready
+    setUserData(DEMO_USER)
+    setResponses(DEMO_RESPONSES)
 
-    const t1 = setTimeout(() => {
-      setUserData(DEMO_USER)
-      setScreen('survey')
-    }, 4000)
+    // t=5s: go to computing screen
+    const t1 = setTimeout(() => setScreen('computing'), 5000)
 
-    const t2 = setTimeout(() => {
-      // Set responses BEFORE computing screen so ResultsPage
-      // is ready when ComputingScreen calls onComplete
-      setResponses(DEMO_RESPONSES)
-      setScreen('computing')
-    }, 10000)
+    // ComputingScreen's own onComplete (~2.8s later) will call
+    // handleComputingDone → setScreen('results') automatically
 
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+    return () => clearTimeout(t1)
   }, [])
 
   /* ── Normal handlers ── */

@@ -13,7 +13,7 @@
 
 /* ── Custom range slider ── */
 input[type="range"] {
-  -webkit-appearance: none;
+  -webkit-appearance: none; 
   appearance: none;
   background: transparent;
   cursor: pointer;
@@ -122,3 +122,9 @@ input[type="range"]::-moz-range-thumb {
   0%   { background-position: 0%   center; }
   100% { background-position: 200% center; }
 }
+
+/* ── ComputingScreen orbits ── */
+@keyframes orbitCW  { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
+@keyframes orbitCCW { from { transform: rotate(0deg);   } to { transform: rotate(-360deg); } }
+.orbit-cw  { animation: orbitCW  8s linear infinite; }
+.orbit-ccw { animation: orbitCCW 5s linear infinite; }
