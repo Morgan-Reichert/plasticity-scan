@@ -42,6 +42,43 @@ function getAnchorRect(name, pad = 16) {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   SCREEN TRANSITIONS — crossfade lumineux entre écrans
+   À chaque transition d'écran (App.jsx), on flash un voile blanc
+   doux pour masquer le hard-cut et donner un feel cinéma.
+   ══════════════════════════════════════════════════════════════ */
+const SCREEN_TRANSITIONS = [
+  { at: 6.0,  duration: 0.9 },   // landing → survey
+  { at: 12.0, duration: 0.9 },   // survey → computing
+  { at: 14.8, duration: 0.7 },   // computing → results (lighter)
+  { at: 34.0, duration: 0.9 },   // results → dashboard
+  { at: 44.0, duration: 1.4 },   // dashboard → outro (longer, more dramatic)
+]
+
+function ScreenFlash({ elapsed }) {
+  const active = SCREEN_TRANSITIONS.find(tr =>
+    elapsed >= tr.at - 0.25 && elapsed < tr.at + tr.duration
+  )
+  if (!active) return null
+  // 3-stage envelope: build-up → peak white → fade
+  const local = (elapsed - (active.at - 0.25)) / (active.duration + 0.25)
+  const c = clamp(local, 0, 1)
+  // Bell curve: smooth in, hold briefly, smooth out
+  const env = c < 0.35
+    ? easeOutCubic(c / 0.35)
+    : c < 0.55
+      ? 1
+      : 1 - easeInCubic((c - 0.55) / 0.45)
+  const opacity = env * 0.85
+  return (
+    <div style={{
+      position:'fixed', inset:0, zIndex:9996, pointerEvents:'none',
+      background:`radial-gradient(ellipse at center, rgba(255,255,255,${opacity}) 0%, rgba(240,244,255,${opacity * 0.75}) 60%, rgba(232,238,255,${opacity * 0.5}) 100%)`,
+      mixBlendMode:'screen',
+    }} />
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════
    TIMELINE — DOM-anchored highlights + margin callouts
    Transitions: 0s landing · 6s survey · 12s computing
                 ~14.8s results · 34s dashboard · 44s outro
@@ -213,12 +250,16 @@ function Banner({ title, subtitle, color, vis }) {
 function BoxRing({ rect, color, vis, elapsed, circle }) {
   if (!rect) return null
   const { opacity, progress } = vis
-  const pulse = 1 + Math.sin(elapsed * 3.2) * 0.025
-  const entryS = easeOutCubic(clamp(progress, 0, 1))
-  const exitS  = 1 - easeInCubic(clamp(1 - progress, 0, 1)) * 0.06
+  const pulse = 1 + Math.sin(elapsed * 3.2) * 0.022
+  const entryT = clamp(progress, 0, 1)
+  const exitT  = clamp(1 - progress, 0, 1)
+  // Soyeux scale: enters with slight bounce, exits gently
+  const entryS = 0.85 + easeOutCubic(entryT) * 0.15
+  const exitS  = 1 - easeInCubic(exitT) * 0.04
   const finalS = progress < 1 ? entryS : exitS
+  // Blur fade
+  const blurAmt = progress < 1 ? (1 - entryT) * 6 : easeInCubic(exitT) * 4
 
-  // Border radius : circle if explicit, else proportional rounded rect
   const radius = circle
     ? '50%'
     : `${Math.min(rect.width, rect.height) * 0.18}px`
@@ -230,18 +271,20 @@ function BoxRing({ rect, color, vis, elapsed, circle }) {
       width: rect.width, height: rect.height,
       borderRadius: radius,
       border:`2.5px solid ${color}`,
-      boxShadow:`0 0 28px ${color}80, 0 0 70px ${color}30, inset 0 0 24px ${color}10`,
+      boxShadow:`0 0 32px ${color}80, 0 0 80px ${color}30, inset 0 0 28px ${color}10`,
       transform:`scale(${finalS * pulse})`,
       transformOrigin:'center',
       opacity: opacity * 0.95,
+      filter:`blur(${blurAmt}px)`,
       zIndex:9991, pointerEvents:'none',
+      transition:'border-color 0.4s ease',
     }}>
       {/* outer echo */}
       <div style={{
         position:'absolute',
         inset:`${-(6 + Math.sin(elapsed * 2.1) * 3)}px`,
         borderRadius: radius,
-        border:`1px solid ${color}35`,
+        border:`1px solid ${color}38`,
         pointerEvents:'none',
       }} />
     </div>
@@ -337,19 +380,25 @@ function Callout({ text, color, pos, from = 'right', vis }) {
   const { opacity, progress } = vis
   const entryT  = clamp(progress, 0, 1)
   const exitAmt = clamp(1 - progress, 0, 1)
-  const dxE = from==='right'?(1-easeOutCubic(entryT))*40:from==='left'?(1-easeOutCubic(entryT))*-40:0
-  const dyE = from==='bottom'?(1-easeOutCubic(entryT))*30:0
-  const dxX = from==='right'?easeInCubic(exitAmt)*20:from==='left'?easeInCubic(exitAmt)*-20:0
-  const dyX = easeInCubic(exitAmt)*8
+  // Smoother slide-in distance + blur for a silky entry
+  const slideDist = 50
+  const dxE = from==='right'?(1-easeOutCubic(entryT))*slideDist:from==='left'?(1-easeOutCubic(entryT))*-slideDist:0
+  const dyE = from==='bottom'?(1-easeOutCubic(entryT))*36:0
+  const dxX = from==='right'?easeInCubic(exitAmt)*24:from==='left'?easeInCubic(exitAmt)*-24:0
+  const dyX = easeInCubic(exitAmt)*10
   const tx = progress<1?dxE:dxX
   const ty = progress<1?dyE:dyX
+  const scale = progress<1 ? 0.92 + easeOutCubic(entryT) * 0.08 : 1 - easeInCubic(exitAmt) * 0.06
+  const blur  = progress<1 ? (1 - entryT) * 6 : easeInCubic(exitAmt) * 3
   return (
     <div style={{
       position:'fixed', ...pos,
       background:'rgba(255,255,255,0.96)', backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
       border:`1.5px solid ${color}55`, borderRadius:14,
       padding:'14px 18px', maxWidth:230, zIndex:9994,
-      pointerEvents:'none', opacity, transform:`translateX(${tx}px) translateY(${ty}px)`,
+      pointerEvents:'none', opacity,
+      transform:`translateX(${tx}px) translateY(${ty}px) scale(${scale})`,
+      filter:`blur(${blur}px)`,
       boxShadow:`0 8px 28px rgba(15,23,42,0.12), 0 0 24px ${color}22`,
     }}>
       <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8 }}>
@@ -389,17 +438,29 @@ function FloatingTag({ text, color, pos, vis }) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   OUTRO — Thème CLAIR cohérent avec le reste de l'app
-   Les logos PNG ont un fond blanc → s'intègrent naturellement
-   sur un fond clair sans rectangle disgracieux.
+   OUTRO — Thème CLAIR, montage pro avec séquence chorégraphiée
+   Chaque élément a son propre timing relatif au début de l'outro.
    ══════════════════════════════════════════════════════════════ */
 function Outro({ vis, elapsed }) {
   const { progress } = vis
-  const e = easeOutCubic(clamp(progress, 0, 1))
-  const t = Math.max(0, elapsed - 44.0)  // seconds since outro started
+  const eMaster = easeOutCubic(clamp(progress, 0, 1))
+  const t = Math.max(0, elapsed - 44.0)
 
-  // Subtle continuous animations
-  const breathe = 1 + Math.sin(t * 0.6) * 0.018
+  // Helper to fade-in individual elements with delay + duration
+  const reveal = (delay, dur = 0.9) => {
+    const local = clamp((t - delay) / dur, 0, 1)
+    return { e: easeOutCubic(local), back: easeOutBack(local) }
+  }
+
+  const r1 = reveal(0.0, 1.1)   // halo
+  const r2 = reveal(0.15, 1.0)  // logo
+  const r3 = reveal(0.8, 0.7)   // divider 1 + by sensup
+  const r4 = reveal(1.3, 0.7)   // tagline
+  const r5 = reveal(1.7, 0.7)   // subtitle
+  const r6 = reveal(2.0, 0.7)   // pills container
+  const r7 = reveal(2.8, 0.6)   // divider 2 + footer
+
+  const breathe = 1 + Math.sin(t * 0.6) * 0.014
   const glowPulse = 0.75 + Math.sin(t * 0.85) * 0.25
 
   const pills = [
@@ -418,13 +479,13 @@ function Outro({ vis, elapsed }) {
         radial-gradient(ellipse at 85% 18%, rgba(20,184,166,0.08) 0%, transparent 50%),
         linear-gradient(180deg, #F0F4FF 0%, #E8EEFF 50%, #F0F4FF 100%)
       `,
-      opacity: e,
+      opacity: eMaster,
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
       zIndex:10000, pointerEvents:'none', overflow:'hidden',
     }}>
 
       {/* Aurora conique tournante */}
-      <div style={{ position:'absolute', inset:0, opacity: e * glowPulse * 0.6, pointerEvents:'none',
+      <div style={{ position:'absolute', inset:0, opacity: eMaster * glowPulse * 0.6, pointerEvents:'none',
         background:`
           conic-gradient(from ${t * 6}deg at 50% 50%,
             rgba(59,130,246,0.08) 0deg,
@@ -435,31 +496,34 @@ function Outro({ vis, elapsed }) {
         filter:'blur(100px)',
       }} />
 
-      {/* Dot grid overlay (matches mesh-bg) */}
-      <div style={{ position:'absolute', inset:0, opacity: e * 0.6, pointerEvents:'none',
+      {/* Dot grid overlay */}
+      <div style={{ position:'absolute', inset:0, opacity: eMaster * 0.55, pointerEvents:'none',
         backgroundImage:'radial-gradient(circle,rgba(59,130,246,0.10) 1px,transparent 1px)',
         backgroundSize:'28px 28px',
         transform:`translateY(${Math.sin(t * 0.3) * 6}px)`,
       }} />
 
-      {/* Mots géants drifting en arrière-plan */}
+      {/* Mots géants drifting */}
       {[
         { text:'plasticité',   color:'#3B82F6', x:'2%',  y:'12%', size:74, op:0.06, drift: t * 0.3 },
         { text:'systémique',   color:'#8B5CF6', x:'1%',  y:'72%', size:66, op:0.055, drift: t * -0.4 },
         { text:'organisation', color:'#14B8A6', x:'50%', y:'8%',  size:58, op:0.05, drift: t * 0.5 },
         { text:'diversité',    color:'#F59E0B', x:'56%', y:'78%', size:62, op:0.055, drift: t * -0.35 },
-      ].map((w, i) => (
-        <div key={w.text} style={{
-          position:'absolute', left:w.x, top:w.y,
-          fontFamily:'Syne,sans-serif', fontSize:w.size, fontWeight:900,
-          color:w.color, opacity: e * w.op, userSelect:'none', pointerEvents:'none',
-          letterSpacing:'-0.02em',
-          transform:`translateY(${(1-e)*(20+i*5) + Math.sin(t * 0.3 + i) * 5}px) translateX(${w.drift}px)`,
-        }}>{w.text}</div>
-      ))}
+      ].map((w, i) => {
+        const wReveal = reveal(0.2 + i * 0.1, 1.5).e
+        return (
+          <div key={w.text} style={{
+            position:'absolute', left:w.x, top:w.y,
+            fontFamily:'Syne,sans-serif', fontSize:w.size, fontWeight:900,
+            color:w.color, opacity: wReveal * w.op, userSelect:'none', pointerEvents:'none',
+            letterSpacing:'-0.02em',
+            transform:`translateY(${(1-wReveal)*20 + Math.sin(t * 0.3 + i) * 5}px) translateX(${w.drift}px)`,
+          }}>{w.text}</div>
+        )
+      })}
 
-      {/* Particules colorées */}
-      {Array.from({ length: 22 }).map((_, i) => {
+      {/* Particules — apparition staggered */}
+      {Array.from({ length: 24 }).map((_, i) => {
         const seed = i * 47.3
         const px = (seed * 13.7) % 100
         const py = (seed * 7.3) % 100
@@ -467,12 +531,13 @@ function Outro({ vis, elapsed }) {
         const driftY = Math.cos(t * 0.5 + i * 1.3) * 22
         const size = 2 + (i % 4)
         const col = ['#3B82F6','#14B8A6','#8B5CF6','#F59E0B'][i % 4]
+        const partReveal = reveal(0.4 + (i % 6) * 0.08, 1.2).e
         return (
           <div key={i} style={{
             position:'absolute',
             left:`${px}%`, top:`${py}%`,
             width:size, height:size, borderRadius:'50%',
-            background:col, opacity: e * 0.55,
+            background:col, opacity: partReveal * 0.55,
             boxShadow:`0 0 ${size*5}px ${col}`,
             transform:`translate(${drift}px, ${driftY}px)`,
             pointerEvents:'none',
@@ -480,50 +545,68 @@ function Outro({ vis, elapsed }) {
         )
       })}
 
-      {/* Contenu principal */}
-      <div style={{ position:'relative', textAlign:'center', padding:'0 48px', maxWidth:920,
-        opacity: e, transform:`translateY(${(1-e)*28}px) scale(${breathe})` }}>
+      {/* Contenu principal — flex strict pour centrage parfait */}
+      <div style={{
+        position:'relative',
+        display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+        padding:'0 48px', maxWidth:920, width:'100%',
+        transform:`scale(${breathe})`,
+      }}>
 
         {/* Halo radial derrière le logo */}
         <div style={{
-          position:'absolute', left:'50%', top:90,
+          position:'absolute', left:'50%', top:130,
           transform:'translate(-50%, -50%)',
-          width:560, height:560, borderRadius:'50%',
-          background:'radial-gradient(circle, rgba(59,130,246,0.22) 0%, rgba(20,184,166,0.12) 35%, transparent 70%)',
-          filter:'blur(40px)',
-          opacity: e * glowPulse,
+          width:620, height:620, borderRadius:'50%',
+          background:'radial-gradient(circle, rgba(59,130,246,0.20) 0%, rgba(20,184,166,0.10) 35%, transparent 70%)',
+          filter:'blur(50px)',
+          opacity: r1.e * glowPulse,
           pointerEvents:'none',
         }} />
 
-        {/* Logo Plasticity Scan — image (white bg blends with light mesh) */}
-        <div style={{ position:'relative', marginBottom:8 }}>
+        {/* Logo Plasticity Scan — centré strict */}
+        <div style={{
+          display:'flex', justifyContent:'center', alignItems:'center',
+          width:'100%', marginBottom:24,
+          opacity: r2.e,
+          transform:`translateY(${(1 - r2.back) * 30}px) scale(${0.85 + r2.back * 0.15})`,
+          filter:`blur(${(1 - r2.e) * 8}px)`,
+        }}>
           <img src="/plasticity-scan-logo.png" alt="Plasticity Scan"
             style={{
-              height:160, width:'auto', objectFit:'contain',
-              filter:`drop-shadow(0 12px 36px rgba(59,130,246,${0.25 * glowPulse}))`,
-              transform:`scale(${0.96 + Math.sin(t * 0.5) * 0.012})`,
+              height:170, width:'auto', objectFit:'contain', display:'block',
+              filter:`drop-shadow(0 14px 40px rgba(59,130,246,${0.28 * glowPulse}))`,
             }} />
         </div>
 
         {/* Trait séparateur */}
         <div style={{
-          width:120, height:1, margin:'12px auto 28px',
-          background:`linear-gradient(to right, transparent, rgba(59,130,246,${0.55 * e}), transparent)`,
+          width:140, height:1, marginBottom:24,
+          background:`linear-gradient(to right, transparent, rgba(59,130,246,0.55), transparent)`,
+          opacity: r3.e,
+          transform:`scaleX(${r3.e})`,
         }} />
 
         {/* By Sensup */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:18, marginBottom:40 }}>
+        <div style={{
+          display:'flex', alignItems:'center', justifyContent:'center', gap:18, marginBottom:44,
+          opacity: r3.e,
+          transform:`translateY(${(1 - r3.e) * 12}px)`,
+        }}>
           <span style={{ fontFamily:'Manrope,sans-serif', fontSize:12, color:'#64748B',
             textTransform:'uppercase', letterSpacing:'0.4em', fontWeight:700 }}>by</span>
           <img src="/sens-up-logo.png" alt="Sensup"
-            style={{ height:58, width:'auto', objectFit:'contain' }} />
+            style={{ height:58, width:'auto', objectFit:'contain', display:'block' }} />
         </div>
 
         {/* Tagline */}
         <p style={{
-          fontFamily:'Syne,sans-serif', fontSize:26, color:'#0F172A',
-          lineHeight:1.4, maxWidth:600, margin:'0 auto 16px', fontWeight:700,
-          letterSpacing:'-0.01em',
+          fontFamily:'Syne,sans-serif', fontSize:28, color:'#0F172A',
+          lineHeight:1.35, maxWidth:620, margin:'0 auto 16px', fontWeight:700,
+          letterSpacing:'-0.01em', textAlign:'center',
+          opacity: r4.e,
+          transform:`translateY(${(1 - r4.e) * 16}px)`,
+          filter:`blur(${(1 - r4.e) * 6}px)`,
         }}>
           Révélez la{' '}
           <span style={{
@@ -535,26 +618,32 @@ function Outro({ vis, elapsed }) {
         </p>
         <p style={{
           fontFamily:'Manrope,sans-serif', fontSize:15, color:'#64748B',
-          lineHeight:1.65, maxWidth:500, margin:'0 auto 44px', fontWeight:500,
+          lineHeight:1.65, maxWidth:500, margin:'0 auto 48px', fontWeight:500,
+          textAlign:'center',
+          opacity: r5.e,
+          transform:`translateY(${(1 - r5.e) * 12}px)`,
         }}>
           Un diagnostic systémique pour les intervenants en transformation organisationnelle.
         </p>
 
-        {/* Pills concepts — apparition staggered */}
-        <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap', marginBottom:48 }}>
+        {/* Pills concepts — apparition cascade */}
+        <div style={{
+          display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap', marginBottom:52,
+          opacity: r6.e,
+        }}>
           {pills.map(({ label, color }, i) => {
-            const pillDelay = clamp(t - 0.5 - i * 0.15, 0, 1)
-            const pillScale = easeOutBack(pillDelay)
+            const pillLocal = clamp((t - 2.0 - i * 0.12) / 0.6, 0, 1)
+            const pillScale = easeOutBack(pillLocal)
             return (
               <div key={label} style={{
-                padding:'10px 24px', borderRadius:100,
-                background:'rgba(255,255,255,0.85)',
+                padding:'11px 26px', borderRadius:100,
+                background:'rgba(255,255,255,0.88)',
                 border:`1.5px solid ${color}55`,
                 color, fontSize:13, fontWeight:700,
                 fontFamily:'Manrope,sans-serif', letterSpacing:'0.06em',
                 boxShadow:`0 4px 24px rgba(15,23,42,0.06), 0 0 16px ${color}1A, inset 0 1px 0 ${color}20`,
-                opacity: e * pillDelay,
-                transform:`scale(${pillScale}) translateY(${(1-pillDelay)*10}px)`,
+                opacity: pillLocal,
+                transform:`scale(${0.6 + pillScale * 0.4}) translateY(${(1-pillLocal)*14}px)`,
                 backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)',
               }}>{label}</div>
             )
@@ -563,23 +652,31 @@ function Outro({ vis, elapsed }) {
 
         {/* Divider final */}
         <div style={{
-          width:160, height:1, margin:'0 auto 22px',
-          background:`linear-gradient(to right, transparent, rgba(20,184,166,${0.5 * e}), transparent)`,
+          width:180, height:1, marginBottom:22,
+          background:`linear-gradient(to right, transparent, rgba(20,184,166,0.5), transparent)`,
+          opacity: r7.e,
+          transform:`scaleX(${r7.e})`,
         }} />
 
         {/* Footer */}
-        <p style={{
-          fontFamily:'Manrope,sans-serif', fontSize:11, color:'#64748B',
-          textTransform:'uppercase', letterSpacing:'0.3em', fontWeight:700, marginBottom:10,
+        <div style={{
+          opacity: r7.e,
+          transform:`translateY(${(1 - r7.e) * 10}px)`,
+          textAlign:'center',
         }}>
-          Diagnostic Systémique · 2026
-        </p>
-        <p style={{
-          fontFamily:'Manrope,sans-serif', fontSize:11, color:'#3B82F6',
-          letterSpacing:'0.25em', fontWeight:700, opacity:0.85,
-        }}>
-          ◆ HeR Labs 2026
-        </p>
+          <p style={{
+            fontFamily:'Manrope,sans-serif', fontSize:11, color:'#64748B',
+            textTransform:'uppercase', letterSpacing:'0.3em', fontWeight:700, marginBottom:10,
+          }}>
+            Diagnostic Systémique · 2026
+          </p>
+          <p style={{
+            fontFamily:'Manrope,sans-serif', fontSize:11, color:'#3B82F6',
+            letterSpacing:'0.25em', fontWeight:700, opacity:0.85,
+          }}>
+            ◆ HeR Labs 2026
+          </p>
+        </div>
       </div>
     </div>
   )
@@ -688,7 +785,11 @@ export default function DemoOverlay() {
   ) : null
 
   return createPortal(
-    <>{zoomPulse}{activeItems.map(renderItem)}</>,
+    <>
+      <ScreenFlash elapsed={elapsed} />
+      {zoomPulse}
+      {activeItems.map(renderItem)}
+    </>,
     document.body
   )
 }
