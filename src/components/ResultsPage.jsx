@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   PolarRadiusAxis,
 } from 'recharts'
-import { ArrowRight, RotateCcw, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react'
+import { RotateCcw, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react'
 import { computeScores, identifyLevers, leverDescriptions, plasticityLevel } from '../surveyData'
 import { saveSession } from '../supabaseClient'
 
@@ -278,29 +278,6 @@ export default function ResultsPage({ userData, responses, onRestart }) {
           </div>
         </div>
 
-        {/* ── CTA ── */}
-        <div
-          className="glass rounded-2xl p-8 text-center glow-blue"
-          style={{ opacity: visible ? 1 : 0, transition: 'all 0.7s ease 0.45s' }}
-        >
-          <p className="text-[11px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-3">
-            Aller plus loin
-          </p>
-          <h3 className="font-syne font-700 text-white text-2xl mb-3">
-            Transformez ces insights en plan d'action
-          </h3>
-          <p className="text-slate-400 font-manrope text-sm max-w-md mx-auto mb-7 leading-relaxed">
-            Un expert Plasticity Scan® analyse vos résultats en détail et co-construit avec vous
-            une feuille de route de transformation adaptée à votre contexte.
-          </p>
-          <button className="inline-flex items-center gap-3 bg-gradient-to-r from-electric to-cyan-scan text-white font-syne font-700 px-8 py-4 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all glow-blue">
-            Demander un accompagnement
-            <ArrowRight size={18} />
-          </button>
-          <p className="text-slate-600 text-xs font-manrope mt-4">
-            Réponse sous 24h · Entretien découverte gratuit
-          </p>
-        </div>
 
       </main>
 
