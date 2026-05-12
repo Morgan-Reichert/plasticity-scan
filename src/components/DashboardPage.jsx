@@ -5,13 +5,14 @@ import {
   PieChart, Pie,
 } from 'recharts'
 import {
-  Activity, Users, TrendingUp, Award, RefreshCw, ArrowLeft,
+  Activity, Users, TrendingUp, Award, RefreshCw,
   AlertCircle, Building2, Search, ChevronUp, ChevronDown,
-  ChevronsUpDown, Download, FileJson, FileText, LogOut,
+  ChevronsUpDown, FileText, LogOut,
 } from 'lucide-react'
 import { supabase, getCompanies } from '../supabaseClient'
 import { dimensions, plasticityLevel } from '../surveyData'
 import CompanyManager from './CompanyManager'
+import PdfReport from './PdfReport'
 
 /* ── Mock data ── */
 const MOCK_COMPANIES = [
@@ -110,41 +111,7 @@ function computeStats(scans) {
   return { n, dimAvgs, globalAvg: parseFloat(globalAvg.toFixed(1)), profileData, leverData }
 }
 
-/* ── Export helpers ── */
-function downloadFile(content, filename, mime) {
-  const blob = new Blob([content], { type: mime })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url; a.download = filename; a.click()
-  URL.revokeObjectURL(url)
-}
-
-function exportCSV(scans) {
-  const SEP = ';'
-  const headers = ['Entreprise', 'Email', 'Profil', 'Score Global', 'Niveau', 'Dim.1', 'Dim.2', 'Dim.3', 'Dim.4', 'Dim.5', 'Dim.6', 'Dim.7', 'Date']
-  const rows = scans.map(s => {
-    const raw = Array.isArray(s.scores) ? s.scores : []
-    const dimScores = dimensions.map((_, i) => {
-      const v = raw[i] ?? ''
-      return typeof v === 'object' ? (v.score ?? '') : v
-    })
-    return [
-      `"${s.company ?? ''}"`,
-      `"${s.email ?? ''}"`,
-      PROFILE_LABELS[s.profile] ?? s.profile ?? '',
-      s.global_score?.toFixed(1) ?? '',
-      plasticityLevel(s.global_score ?? 0).label,
-      ...dimScores,
-      s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '',
-    ].join(SEP)
-  })
-  const csv = '﻿' + [headers.join(SEP), ...rows].join('\n')
-  downloadFile(csv, `plasticity-scan-${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv;charset=utf-8')
-}
-
-function exportJSON(scans) {
-  downloadFile(JSON.stringify(scans, null, 2), `plasticity-scan-${new Date().toISOString().slice(0, 10)}.json`, 'application/json')
-}
+/* ── Export helpers (CSV/JSON kept for internal use if needed, not exposed to UI) ── */
 
 /* ════════════════════════════════════════════════════════════════════════
    MAIN DASHBOARD
@@ -165,6 +132,7 @@ export default function DashboardPage({ authUser, onBack }) {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState({ field: 'created_at', dir: 'desc' })
   const [page, setPage] = useState(1)
+  const [showPdf, setShowPdf] = useState(false)
   const PAGE_SIZE = 10
 
   const toggleSort = (field) => {
@@ -376,18 +344,14 @@ export default function DashboardPage({ authUser, onBack }) {
                   {/* Spacer */}
                   <div className="flex-1 hidden lg:block" />
 
-                  {/* Exports */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-slate-500 text-xs font-manrope hidden sm:block">Export :</span>
-                    <button onClick={() => exportCSV(filteredScans)} disabled={!filteredScans.length}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-white hover:border-cyan-scan/40 text-xs font-manrope transition-all disabled:opacity-30">
-                      <FileText size={12} className="text-cyan-scan" /> CSV
+                  {/* PDF Export — intervenants only */}
+                  {!isDirigeant && (
+                    <button onClick={() => setShowPdf(true)} disabled={!filteredScans.length || !stats}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl border border-electric/30 bg-electric/5 text-electric hover:bg-electric/15 hover:border-electric/60 text-xs font-manrope font-600 transition-all disabled:opacity-30 disabled:cursor-not-allowed glow-blue">
+                      <FileText size={13} />
+                      Rapport PDF
                     </button>
-                    <button onClick={() => exportJSON(filteredScans)} disabled={!filteredScans.length}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-navy-600 text-slate-400 hover:text-white hover:border-electric/40 text-xs font-manrope transition-all disabled:opacity-30">
-                      <FileJson size={12} className="text-electric" /> JSON
-                    </button>
-                  </div>
+                  )}
                 </div>
 
                 {/* Active filters summary */}
@@ -531,16 +495,12 @@ export default function DashboardPage({ authUser, onBack }) {
                           {filteredScans.length > PAGE_SIZE && ` · page ${page}/${totalPages}`}
                         </p>
                       </div>
-                      <div className="flex gap-2">
-                        <button onClick={() => exportCSV(filteredScans)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-navy-600 text-slate-400 hover:text-cyan-scan hover:border-cyan-scan/40 text-xs font-manrope transition-all">
-                          <Download size={11} /> CSV
+                      {!isDirigeant && (
+                        <button onClick={() => setShowPdf(true)} disabled={!filteredScans.length || !stats}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-electric/30 bg-electric/5 text-electric hover:bg-electric/15 text-xs font-manrope font-600 transition-all disabled:opacity-30">
+                          <FileText size={11} /> PDF
                         </button>
-                        <button onClick={() => exportJSON(filteredScans)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-navy-600 text-slate-400 hover:text-electric hover:border-electric/40 text-xs font-manrope transition-all">
-                          <Download size={11} /> JSON
-                        </button>
-                      </div>
+                      )}
                     </div>
 
                     <div className="overflow-x-auto">
@@ -638,6 +598,18 @@ export default function DashboardPage({ authUser, onBack }) {
           )}
 
         </main>
+      )}
+
+      {/* ── PDF Report overlay ── */}
+      {showPdf && !isDirigeant && stats && (
+        <PdfReport
+          stats={stats}
+          filteredScans={filteredScans}
+          companies={companies}
+          companyFilter={companyFilter}
+          profileFilter={profileFilter}
+          onClose={() => setShowPdf(false)}
+        />
       )}
     </div>
   )
