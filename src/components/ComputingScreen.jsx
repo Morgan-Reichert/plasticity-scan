@@ -51,7 +51,7 @@ export default function ComputingScreen({ onComplete }) {
         style={{ width: 220, height: 220, border: '1px solid rgba(20,184,166,0.12)' }} />
 
       {/* Center */}
-      <div className="relative z-10 mb-10">
+      <div data-demo="computing-center" className="relative z-10 mb-10">
         <div className="relative w-20 h-20 flex items-center justify-center">
           <span className="absolute inset-0 rounded-full bg-electric/15 animate-pulseRing" />
           <span className="absolute inset-2 rounded-full bg-electric/10 animate-pulseRing" style={{ animationDelay: '0.5s' }} />

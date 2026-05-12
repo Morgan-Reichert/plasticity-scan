@@ -220,7 +220,7 @@ export default function SurveyPage({ userData, onComplete, isDemo }) {
         </div>
 
         {/* Questions */}
-        <div ref={cardRef} className="w-full space-y-4"
+        <div ref={cardRef} data-demo="survey-questions" className="w-full space-y-4"
           style={{ opacity: transitioning ? 0 : 1, transform: transitioning ? 'translateY(16px)' : 'translateY(0)', transition: 'all 0.3s ease' }}>
           <SliderQuestion
             label="Question 1"

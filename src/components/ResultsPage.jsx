@@ -319,11 +319,12 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
 
         {/* ── Score hero + Radar ── */}
         <div
+          data-demo="results-score-radar"
           className="grid md:grid-cols-[160px_1fr] gap-6 items-center"
           style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.15s' }}
         >
           {/* Global score */}
-          <div className="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center glow-blue md:self-stretch">
+          <div data-demo="results-score" className="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center glow-blue md:self-stretch">
             <span className="text-slate-500 text-[11px] font-manrope font-600 uppercase tracking-widest mb-3">
               Score global
             </span>
@@ -347,7 +348,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
           </div>
 
           {/* Radar */}
-          <div className="glass rounded-2xl p-4 glow-teal" style={{ height: 340 }}>
+          <div data-demo="results-radar" className="glass rounded-2xl p-4 glow-teal" style={{ height: 340 }}>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} margin={{ top: 16, right: 24, bottom: 16, left: 24 }}>
                 <PolarGrid stroke="rgba(59,130,246,0.15)" gridType="polygon" />
@@ -380,6 +381,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
 
         {/* ── Dimension scores ── */}
         <div
+          data-demo="results-dimensions"
           style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.25s' }}
         >
           <h2 className="font-syne font-700 text-slate-900 text-lg mb-4">
@@ -477,7 +479,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
           </div>
 
           {/* Narrative tension block */}
-          <div className="glass rounded-2xl p-6 relative overflow-hidden"
+          <div data-demo="results-tension" className="glass rounded-2xl p-6 relative overflow-hidden"
             style={{
               borderColor: narrative.urgency === 'critical' ? 'rgba(239,68,68,0.3)'
                 : narrative.urgency === 'high'   ? 'rgba(245,158,11,0.3)'
@@ -528,6 +530,7 @@ export default function ResultsPage({ userData, responses, onRestart, isDemo }) 
 
         {/* ── Diagnostic levers ── */}
         <div
+          data-demo="results-levers"
           style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(24px)', transition: 'all 0.7s ease 0.35s' }}
         >
           <div className="flex items-center gap-3 mb-5">

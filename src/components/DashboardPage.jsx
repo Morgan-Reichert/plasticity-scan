@@ -411,7 +411,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
               ) : (
                 <>
                   {/* KPI row */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div data-demo="dashboard-kpis" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <KpiCard icon={Users} label="Scans filtrés" value={filteredScans.length}
                       sub={`sur ${scans?.length ?? 0} total`} color="#3B82F6" />
                     <KpiCard icon={Activity} label="Score moyen"
@@ -432,7 +432,7 @@ export default function DashboardPage({ authUser, onBack, isDemo }) {
                   {stats && (
                     <div className="grid lg:grid-cols-2 gap-6">
                       {/* Radar */}
-                      <div className="glass rounded-2xl p-6 glow-teal">
+                      <div data-demo="dashboard-radar" className="glass rounded-2xl p-6 glow-teal">
                         <h2 className="font-syne font-700 text-slate-900 text-base mb-1">Profil moyen</h2>
                         <p className="text-slate-500 text-xs font-manrope mb-4">Scores moyens par dimension</p>
                         <div style={{ height: 280 }}>

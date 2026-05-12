@@ -129,7 +129,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
             </div>
 
             {/* H1 */}
-            <h1 className="anim-1 font-syne font-800 text-4xl md:text-[3.25rem] leading-[1.08] text-slate-900 mb-5">
+            <h1 data-demo="landing-h1" className="anim-1 font-syne font-800 text-4xl md:text-[3.25rem] leading-[1.08] text-slate-900 mb-5">
               Mesurez la{' '}
               <span className="shimmer-text">plasticité</span>
               <br />
@@ -212,7 +212,7 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
           </div>
 
           {/* ── Right: Form ── */}
-          <div className="anim-5 lg:sticky lg:top-8">
+          <div className="anim-5 lg:sticky lg:top-8" data-demo="landing-form">
             <div className="glass rounded-2xl p-8 glow-blue">
               <div className="mb-7">
                 <h2 className="font-syne font-700 text-slate-900 text-xl mb-1">Démarrer le diagnostic</h2>
