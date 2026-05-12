@@ -50,10 +50,11 @@ function computeCompanyStats(scans) {
   return { n, dimAvgs, globalAvg: parseFloat(globalAvg.toFixed(1)) }
 }
 
-export default function ResultsPage({ userData, responses, onRestart }) {
+export default function ResultsPage({ userData, responses, onRestart, isDemo }) {
   const [visible, setVisible] = useState(false)
   const [companyScans, setCompanyScans] = useState([])
   const [loadingCompany, setLoadingCompany] = useState(false)
+  const [displayScore, setDisplayScore] = useState(0)
 
   const scores = computeScores(responses)
   const globalAvg = scores.reduce((s, d) => s + d.score, 0) / scores.length
@@ -67,6 +68,32 @@ export default function ResultsPage({ userData, responses, onRestart }) {
     score: d.score,
     fullMark: 9,
   }))
+
+  /* ── Demo auto-scroll ── */
+  useEffect(() => {
+    if (!isDemo) return
+    // Smooth scroll down after score reveal
+    const t1 = setTimeout(() => window.scrollTo({ top: 500,  behavior: 'smooth' }), 4000)
+    const t2 = setTimeout(() => window.scrollTo({ top: 1100, behavior: 'smooth' }), 7500)
+    const t3 = setTimeout(() => window.scrollTo({ top: 1800, behavior: 'smooth' }), 11000)
+    const t4 = setTimeout(() => window.scrollTo({ top: 2400, behavior: 'smooth' }), 14000)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+  }, [isDemo])
+
+  /* ── Score count-up animation ── */
+  useEffect(() => {
+    const target = parseFloat(globalAvg.toFixed(1))
+    const duration = 1800
+    const steps = 60
+    const increment = target / steps
+    let current = 0
+    const timer = setInterval(() => {
+      current = Math.min(current + increment, target)
+      setDisplayScore(parseFloat(current.toFixed(1)))
+      if (current >= target) clearInterval(timer)
+    }, duration / steps)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 100)
@@ -303,10 +330,10 @@ export default function ResultsPage({ userData, responses, onRestart }) {
               Score global
             </span>
             <span
-              className="font-syne font-800 text-6xl leading-none mb-1"
-              style={{ color: level.color }}
+              className="font-syne font-800 text-6xl leading-none mb-1 tabular-nums"
+              style={{ color: level.color, transition: 'color 0.3s' }}
             >
-              {globalAvg.toFixed(1)}
+              {displayScore.toFixed(1)}
             </span>
             <span className="text-slate-500 font-manrope text-sm">/ 9</span>
             <div className="mt-4 w-full bg-navy-700 rounded-full h-1.5 overflow-hidden">

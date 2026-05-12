@@ -79,7 +79,7 @@ function SliderQuestion({ label, questionText, level, value, onChange }) {
   )
 }
 
-export default function SurveyPage({ userData, onComplete }) {
+export default function SurveyPage({ userData, onComplete, isDemo }) {
   const [dimIndex, setDimIndex] = useState(0)
   const [responses, setResponses] = useState({})
   const [transitioning, setTransitioning] = useState(false)
@@ -95,6 +95,48 @@ export default function SurveyPage({ userData, onComplete }) {
   const q1val = responses[q1key] ?? 5
 
   const setQ = (key, val) => setResponses((prev) => ({ ...prev, [key]: val }))
+
+  /* ── Demo mode: animate sliders then auto-advance through 2 dims ── */
+  useEffect(() => {
+    if (!isDemo) return
+    // Animate q0 slider 5→7 over 600ms, then q1 slider 5→8 over 600ms
+    let v0 = 5, v1 = 5
+    const animQ0 = setInterval(() => {
+      v0 = Math.min(v0 + 1, 7)
+      setQ(`${dimensions[0].id}_0`, v0)
+      if (v0 >= 7) clearInterval(animQ0)
+    }, 200)
+    const animQ1 = setTimeout(() => {
+      const i1 = setInterval(() => {
+        v1 = Math.min(v1 + 1, 8)
+        setQ(`${dimensions[0].id}_1`, v1)
+        if (v1 >= 8) clearInterval(i1)
+      }, 200)
+    }, 800)
+    // advance to dim 2 after 2.5s
+    const adv1 = setTimeout(() => {
+      setTransitioning(true)
+      setTimeout(() => { setDimIndex(1); setTransitioning(false) }, 300)
+    }, 2500)
+    // animate dim 2 sliders
+    const animDim2 = setTimeout(() => {
+      let a = 5, b = 5
+      const iA = setInterval(() => {
+        a = Math.min(a + 1, 6)
+        setQ(`${dimensions[1].id}_0`, a)
+        if (a >= 6) clearInterval(iA)
+      }, 220)
+      const iB = setTimeout(() => {
+        const iC = setInterval(() => {
+          b = Math.min(b + 1, 7)
+          setQ(`${dimensions[1].id}_1`, b)
+          if (b >= 7) clearInterval(iC)
+        }, 220)
+      }, 700)
+    }, 3300)
+
+    return () => { clearInterval(animQ0); clearTimeout(animQ1); clearTimeout(adv1); clearTimeout(animDim2) }
+  }, [isDemo])
 
   const goNext = () => {
     if (transitioning) return
