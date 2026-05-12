@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0A0F1E;
+    color: #F8FAFC;
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ── Custom range slider ── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #3B82F6 0%,
+    #14B8A6 var(--range-pct, 50%),
+    #1E293B var(--range-pct, 50%)
+  );
+  height: 6px;
+  border-radius: 4px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #3B82F6;
+  margin-top: -10px;
+  box-shadow: 0 0 16px rgba(59,130,246,0.55);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 26px rgba(59,130,246,0.85);
+  transform: scale(1.12);
+}
+input[type="range"]::-moz-range-track {
+  background: #1E293B;
+  height: 6px;
+  border-radius: 4px;
+}
+input[type="range"]::-moz-range-progress {
+  background: linear-gradient(to right, #3B82F6, #14B8A6);
+  height: 6px;
+  border-radius: 4px;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #3B82F6;
+  box-shadow: 0 0 16px rgba(59,130,246,0.55);
+  cursor: pointer;
+}
+
+/* ── Background textures ── */
+.mesh-bg {
+  background-color: #0A0F1E;
+  background-image:
+    radial-gradient(at 15% 40%, rgba(59,130,246,0.10) 0px, transparent 55%),
+    radial-gradient(at 85% 15%, rgba(20,184,166,0.08) 0px, transparent 50%),
+    radial-gradient(at 55% 85%, rgba(59,130,246,0.06) 0px, transparent 45%);
+}
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(148,163,184,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── Glassmorphism ── */
+.glass {
+  background: rgba(15,23,42,0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(59,130,246,0.18);
+}
+.glass-light {
+  background: rgba(30,41,59,0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(59,130,246,0.12);
+}
+
+/* ── Glow helpers ── */
+.glow-blue  { box-shadow: 0 0 40px rgba(59,130,246,0.22); }
+.glow-teal  { box-shadow: 0 0 40px rgba(20,184,166,0.22); }
+
+/* ── Staggered fade-in animations ── */
+.anim-0 { opacity: 0; animation: fadeInUp 0.6s ease 0.05s forwards; }
+.anim-1 { opacity: 0; animation: fadeInUp 0.6s ease 0.15s forwards; }
+.anim-2 { opacity: 0; animation: fadeInUp 0.6s ease 0.25s forwards; }
+.anim-3 { opacity: 0; animation: fadeInUp 0.6s ease 0.35s forwards; }
+.anim-4 { opacity: 0; animation: fadeInUp 0.6s ease 0.45s forwards; }
+.anim-5 { opacity: 0; animation: fadeInUp 0.6s ease 0.55s forwards; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Shimmer gradient text ── */
+.shimmer-text {
+  background: linear-gradient(90deg, #3B82F6 0%, #14B8A6 30%, #60A5FA 60%, #3B82F6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 200% center; }
+}
