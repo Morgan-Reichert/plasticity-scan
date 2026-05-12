@@ -144,14 +144,17 @@ export default function DashboardPage({ onBack }) {
         .select('*')
         .eq('status', 'completed')
         .order('created_at', { ascending: false })
-      if (!error && data?.length) {
-        setScans(data)
-        setUsingMock(false)
-      } else {
+      if (error) {
+        console.error('Supabase error:', error)
         setScans(MOCK)
         setUsingMock(true)
+      } else {
+        // Table connectée — on affiche les vraies données même si vides
+        setScans(data ?? [])
+        setUsingMock(false)
       }
     } else {
+      // Pas de Supabase configuré → données démo
       setScans(MOCK)
       setUsingMock(true)
     }
@@ -222,6 +225,32 @@ export default function DashboardPage({ onBack }) {
           <div className="flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-2 border-navy-600 border-t-electric rounded-full animate-spin" />
             <span className="text-slate-500 font-manrope text-sm">Chargement des données…</span>
+          </div>
+        </div>
+      ) : !usingMock && scans?.length === 0 ? (
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="flex flex-col items-center gap-5 text-center max-w-sm">
+            <div className="w-16 h-16 rounded-2xl bg-navy-700 border border-navy-600 flex items-center justify-center">
+              <Activity size={28} className="text-slate-600" />
+            </div>
+            <div>
+              <h2 className="font-syne font-700 text-white text-xl mb-2">Aucun scan pour le moment</h2>
+              <p className="text-slate-400 font-manrope text-sm leading-relaxed">
+                Supabase est connecté ✓<br />
+                Les statistiques apparaîtront ici dès que des participants auront complété leur diagnostic.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-scan/10 border border-cyan-scan/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-scan animate-pulse" />
+              <span className="text-cyan-scan text-xs font-manrope font-600">Base de données opérationnelle</span>
+            </div>
+            <button
+              onClick={fetchScans}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-navy-600 text-slate-400 hover:text-white hover:border-electric/40 text-sm font-manrope transition-all"
+            >
+              <RefreshCw size={13} />
+              Actualiser
+            </button>
           </div>
         </div>
       ) : stats ? (
