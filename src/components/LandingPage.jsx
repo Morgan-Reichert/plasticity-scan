@@ -111,28 +111,45 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
 
           {/* ── Left: Hero ── */}
           <div>
+
+            {/* Badge systémique */}
             <div className="anim-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-scan/30 bg-cyan-scan/10 mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-scan animate-pulse inline-block" />
               <span className="text-cyan-scan text-[11px] font-manrope font-600 tracking-widest uppercase">
-                Outil de diagnostic organisationnel
+                Outil de diagnostic systémique
               </span>
             </div>
 
-            <h1 className="anim-1 font-syne font-800 text-4xl md:text-[3.25rem] leading-[1.08] text-white mb-6">
+            {/* H1 */}
+            <h1 className="anim-1 font-syne font-800 text-4xl md:text-[3.25rem] leading-[1.08] text-white mb-5">
               Mesurez la{' '}
               <span className="shimmer-text">plasticité</span>
               <br />
               de votre organisation
             </h1>
 
-            <p className="anim-2 font-manrope text-lg text-slate-400 leading-relaxed mb-10 max-w-[480px]">
-              Le <strong className="text-white font-600">Plasticity Scan®</strong> cartographie vos zones de
-              rigidité, détecte les fragilités systémiques et identifie les leviers d'action
-              pour piloter des transformations robustes à l'ère de la complexité et de l'IA.
+            {/* Vision statement */}
+            <p className="anim-1 font-manrope text-base text-slate-500 italic leading-snug mb-6 border-l-2 border-electric/40 pl-4 max-w-[440px]">
+              "Devenir un modèle de lecture des organisations à l'ère de la complexité,
+              de l'incertitude et de l'IA."
             </p>
 
-            <div className="anim-3 flex flex-wrap gap-3 mb-12">
-              {[{ label: '7 Dimensions', Icon: Target }, { label: '14 Questions', Icon: Activity }, { label: 'Score 0–9', Icon: Zap }].map(({ label, Icon }) => (
+            {/* Description */}
+            <p className="anim-2 font-manrope text-base text-slate-400 leading-relaxed mb-8 max-w-[480px]">
+              Le <strong className="text-white font-600">Plasticity Scan®</strong> est un outil de diagnostic
+              systémique rapide qui évalue la capacité réelle d'une organisation à{' '}
+              <span className="text-slate-300">absorber les transformations</span>,{' '}
+              <span className="text-slate-300">coopérer dans la complexité</span> et{' '}
+              <span className="text-slate-300">maintenir sa capacité d'exécution</span> sous pression.
+            </p>
+
+            {/* Feature pills */}
+            <div className="anim-3 flex flex-wrap gap-3 mb-8">
+              {[
+                { label: 'Diagnostic systémique', Icon: Target },
+                { label: '3 niveaux de perception', Icon: Activity },
+                { label: 'Leviers d\'action concrets', Icon: Zap },
+              ].map(({ label, Icon }) => (
                 <div key={label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-navy-700 border border-navy-600">
                   <Icon size={13} className="text-cyan-scan" />
                   <span className="text-slate-300 text-sm font-manrope font-500">{label}</span>
@@ -140,15 +157,50 @@ export default function LandingPage({ onStart, onIntervenantAccess }) {
               ))}
             </div>
 
-            <div className="anim-4 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6">
-              {DIMS.map((d, i) => (
-                <div key={d} className="flex items-center gap-2 text-slate-500 text-sm font-manrope">
-                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: `hsl(${200 + i * 22}, 70%, 60%)` }} />
-                  {d}
+            {/* 3 levels of perception — key differentiator */}
+            <div className="anim-3 glass-light rounded-2xl p-5 mb-8">
+              <p className="text-[11px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-4">
+                Confrontation des perceptions
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { level: 'Terrain',     sub: 'Collaborateurs',        color: '#3B82F6', symbol: '◎' },
+                  { level: 'Management',  sub: 'Managers & Team Leads',  color: '#14B8A6', symbol: '◉' },
+                  { level: 'Direction',   sub: 'Dirigeants & Board',     color: '#8B5CF6', symbol: '●' },
+                ].map(({ level, sub, color, symbol }) => (
+                  <div key={level} className="flex flex-col items-center text-center gap-2 p-3 rounded-xl"
+                    style={{ background: color + '0D', border: `1px solid ${color}20` }}>
+                    <span className="text-2xl" style={{ color }}>{symbol}</span>
+                    <div>
+                      <p className="font-syne font-700 text-white text-sm">{level}</p>
+                      <p className="font-manrope text-[10px] text-slate-500 leading-tight">{sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs font-manrope text-slate-600 mt-3 text-center leading-relaxed">
+                Cartographie des écarts de perception, zones de rigidité et fragilités systémiques
+              </p>
+            </div>
+
+            {/* What it produces */}
+            <div className="anim-4 space-y-2">
+              <p className="text-[11px] font-manrope font-600 uppercase tracking-widest text-slate-500 mb-3">
+                Ce que le scan révèle
+              </p>
+              {[
+                { label: 'Zones de rigidité organisationnelle',      color: '#EF4444' },
+                { label: 'Écarts de perception inter-niveaux',       color: '#F59E0B' },
+                { label: 'Fragilités systémiques cachées',            color: '#8B5CF6' },
+                { label: 'Leviers d\'action prioritaires',            color: '#14B8A6' },
+              ].map(({ label, color }) => (
+                <div key={label} className="flex items-center gap-3 font-manrope text-sm text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color }} />
+                  {label}
                 </div>
               ))}
             </div>
+
           </div>
 
           {/* ── Right: Form ── */}
