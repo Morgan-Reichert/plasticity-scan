@@ -473,11 +473,11 @@ function Outro({ vis }) {
             backgroundClip:'text', marginBottom:10,
           }}>Plasticity Scan®</h1>
           {/* Sensup logo */}
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:10 }}>
-            <span style={{ fontFamily:'Manrope,sans-serif', fontSize:12, color:'#475569',
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:14 }}>
+            <span style={{ fontFamily:'Manrope,sans-serif', fontSize:13, color:'#475569',
               textTransform:'uppercase', letterSpacing:'0.3em', fontWeight:700 }}>by</span>
             <img src="/sensup-logo.png" alt="Sensup"
-              style={{ height:38, width:'auto', objectFit:'contain', opacity:0.82 }} />
+              style={{ height:72, width:'auto', objectFit:'contain', opacity:0.9 }} />
           </div>
         </div>
 
@@ -504,14 +504,14 @@ function Outro({ vis }) {
           background:'linear-gradient(to right,transparent,rgba(59,130,246,0.4),transparent)' }} />
 
         {/* Footer — subtle hackathon mention */}
-        <p style={{ fontFamily:'Manrope,sans-serif', fontSize:11, color:'#334155',
+        <p style={{ fontFamily:'Manrope,sans-serif', fontSize:11, color:'#475569',
           textTransform:'uppercase', letterSpacing:'0.2em', fontWeight:600,
           marginBottom:10 }}>
           Sensup · Diagnostic Systémique · 2026
         </p>
-        <p style={{ fontFamily:'Manrope,sans-serif', fontSize:10, color:'#1E293B',
-          letterSpacing:'0.15em', fontWeight:600 }}>
-          ◆ Hackathon Femmes dans la Tech
+        <p style={{ fontFamily:'Manrope,sans-serif', fontSize:11, color:'#3B82F6',
+          letterSpacing:'0.18em', fontWeight:700, opacity:0.7 }}>
+          ◆ HeR Labs 2026
         </p>
       </div>
     </div>

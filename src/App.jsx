@@ -45,19 +45,32 @@ export default function App() {
     if (!window.location.search.includes('demo')) return
     setIsDemo(true)
 
+    // Start at the very top of the page
+    window.scrollTo(0, 0)
+
     // Pre-load all data immediately so every screen is ready
     setUserData(DEMO_USER)
     setResponses(DEMO_RESPONSES)
 
-    const t1 = setTimeout(() => setScreen('survey'),    6000)
-    const t2 = setTimeout(() => setScreen('computing'), 12000)
+    // Hide cursor for the entire duration of the recording
+    const styleEl = document.createElement('style')
+    styleEl.id = 'demo-cursor-hide'
+    styleEl.textContent = '*, *::before, *::after { cursor: none !important; }'
+    document.head.appendChild(styleEl)
+
+    const t1 = setTimeout(() => { window.scrollTo(0, 0); setScreen('survey') },    6000)
+    const t2 = setTimeout(() => { window.scrollTo(0, 0); setScreen('computing') }, 12000)
     // computing → results is handled naturally by ComputingScreen.onComplete at ~t+2.8s
     const t3 = setTimeout(() => {
+      window.scrollTo(0, 0)
       setAuthUser({ role: 'intervenant', email: 'demo@sensup.com' })
       setScreen('dashboard')
     }, 34000)
 
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    return () => {
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3)
+      document.getElementById('demo-cursor-hide')?.remove()
+    }
   }, [])
 
   /* ── Normal handlers ── */
