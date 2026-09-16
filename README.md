@@ -5,5 +5,5 @@ Projet mené en collaboration avec l'équipe de Boosturb et Hypersens (https://h
 Ce projet n'est pas un projet abouti, il n'a servi qu'a la présentation visuel de l'idée et des algorithmes. 
 
 Projet protégé, 
-Le code est la propriété exclusive de Morgan Reichert et du groupe européen qu'il "QlickLab.eu"
+Le code est la propriété exclusive de Morgan Reichert et du groupe européen tech "QlickLab.eu"
 
